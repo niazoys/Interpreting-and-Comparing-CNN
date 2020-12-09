@@ -111,7 +111,7 @@ class conceptLoader(Dataset):
         return (im[:,:,0] + (im[:,:,1])*256)
 
 class classLoader(Dataset):
-    """Broaden Dataset class Loader"""
+    """Broaden Dataset class wise Loader"""
     
     def __init__(self, root_dir):
         """
@@ -139,13 +139,15 @@ class classLoader(Dataset):
         self.data_counter +=batch_size 
         return image_data,mask_data
 
+    def get_length(self,class_number):
+        csv_file = os.path.join(self.csv_file_path,str(class_number)+'.csv')
+        fileNames = pd.read_csv(csv_file)
+        return len(fileNames)
+
     def load_class(self,idx,k):
         csv_file = os.path.join(self.csv_file_path,str(idx)+'.csv')
-        fileNames = pd.read_csv(csv_file)
-
-
-
-        c_index = str(fileNames.iloc[k, 1])
+        self.fileNames = pd.read_csv(csv_file)
+        c_index = str(self.fileNames.iloc[k, 1])
         if c_index=='nan':
             self.c_flag = False
             sample = torch.zeros([ 3, 227, 227])
@@ -163,7 +165,7 @@ class classLoader(Dataset):
             mask = TF.to_tensor(mask)   
 
             #To load the Image
-            c_index = str(fileNames.iloc[k, 0])
+            c_index = str(self.fileNames.iloc[k, 0])
             img_name = os.path.join(self.root_dir,c_index)
             image = Image.open(img_name)
             px = np.array(image)
@@ -180,12 +182,14 @@ class classLoader(Dataset):
 
   
 if __name__ == "__main__":
+
+    '''  Sample Useages '''
     dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
     # data_obj = imageLoader(dataset_path)
     # data_obj = conceptLoader(dataset_path)
     data_obj = classLoader(dataset_path)
     # flag,sample,mask = data_obj.load_class(1,1)
-    sample,mask = data_obj.load_batch(185,20)
+    sample,mask = data_obj.load_batch(93,20)
     # print(aa.shape)
     # print(np.unique(aa.numpy()))
     # print(flag)
