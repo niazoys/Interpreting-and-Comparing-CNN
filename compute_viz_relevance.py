@@ -49,21 +49,16 @@ def revelence_score_pipeline (x,mask,model,layer):
 
     #calculate the relevance score per unit 
     relevance_score =np.sum(np.sum(abs(masked_attribution),axis=3),axis=2)
-    avg_relevance_score=np.average(relevance_score,axis=0)
-
+    
     return attribution,masked_attribution,relevance_score
 
 if  __name__ == "__main__":
     
-    batch_size=10
-
-    transform=transforms.Compose([transforms.Resize(224),transforms.ToTensor()])
-
-    testset=torchvision.datasets.CIFAR100(root='./dataset',train=False,
-                                 download=True,transform=transform)
-
-    testloader=torch.utils.data.DataLoader(testset,batch_size=batch_size,shuffle=False) 
-
+   # Get the data and annotation mask 
+    dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
+    clLoader=classLoader(dataset_path)
+    # Dog=93 ,cat=105
+   
 
     #Get the model
     prober=probe_model()
@@ -74,29 +69,46 @@ if  __name__ == "__main__":
     names=vis.get_saved_layer_names()
     layer=vis.conv_layers[names[10]]
 
-    #Load a single image
-    x=Utility.load_single_image('C:\\Users\\Niaz\OneDrive\\StudyMaterials\\UBx\\TRDP2\\ICCNN\\Crack-The-CNN\\cat_01.jpg',load_mask=False)
-    original_image=np.transpose(x.cpu().numpy().squeeze(),(1,2,0))
+    # #Load a single image
+    # x=Utility.load_single_image('C:\\Users\\Niaz\OneDrive\\StudyMaterials\\UBx\\TRDP2\\ICCNN\\Crack-The-CNN\\cat_01.jpg',load_mask=False)
+    # original_image=np.transpose(x.cpu().numpy().squeeze(),(1,2,0))
+    
+    # # a demo mask for testing 
+    # mask =np.zeros((batch_size,113,113))
+    # mask[:,25:95,25:95]=1
     
 
-    # a demo mask for testing 
-    mask =np.zeros((batch_size,113,113))
-    mask[:,25:95,25:95]=1
-    
-    for x,y in testloader:
+    class_selector = 93
+    sample_count   = clLoader.get_length(class_selector)
+    iterations     =int( np.floor(sample_count/100) )
+    list_batch_relevance_score=[]
+    for i in range(3):
+        
+        x,mask=clLoader.load_batch(class_selector,2)
+
         #Get relevance score 
-        _,masked_attribution,avg_relevance_score=revelence_score_pipeline(x,mask,model,layer)
+        _,masked_attribution,batch_relevance_score=revelence_score_pipeline(x,mask,model,layer)
 
         #visualize the masked maps 
         # _ = vizu.visualize_image_attr(np.expand_dims(masked_attribution[:,10,:,:],axis=2),sign="absolute_value",
         #                 show_colorbar=True, title="IG")
         
-        #show many images 
+        # #show many images 
         im_sample=1
-        Utility.show_many_images(masked_attribution[im_sample,:,:,:],36)
+        Utility.show_many_images((masked_attribution[im_sample,:,:,:]),36,False)
         
-        plt.hist(avg_relevance_score[im_sample,:], bins=8, histtype='barstacked')
-        plt.show()
+        # for i in range(5):
+        #     plt.imshow ((masked_attribution[im_sample,i,:,:]))
+        #     plt.colorbar()
+        #     plt.show()
+        list_batch_relevance_score.append (batch_relevance_score)
+    
+    relevance_score=np.vstack(list_batch_relevance_score)
+
+    avg_relevance_score=np.average(relevance_score,axis=0)
+
+    plt.hist(avg_relevance_score, bins=8, histtype='barstacked')
+    plt.show()
 
         
         
