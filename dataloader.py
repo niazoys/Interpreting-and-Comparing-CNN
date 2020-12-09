@@ -191,7 +191,4 @@ if __name__ == "__main__":
     # print(flag)
     print(sample.shape)
     print(mask.shape)
-    import matplotlib.pyplot as plt 
-    for i in range (20):
-        plt.imshow(np.transpose(sample[i,:,:,:].detach().numpy(),(1,2,0)))
-        plt.show()
+    
