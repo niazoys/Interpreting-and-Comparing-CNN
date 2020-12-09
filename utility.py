@@ -86,7 +86,7 @@ class Utility ():
             return input
     
     @staticmethod
-    def show_many_images(imgs,num):
+    def show_many_images(imgs,num,colormap_gray=True):
 
         fig=plt.figure(figsize=(15, 15))
         columns = 6
@@ -94,7 +94,10 @@ class Utility ():
         for i in range(num):
             img = imgs[i,:,:]
             fig.add_subplot(rows, columns,i+1)
-            plt.imshow(img,cmap='gray')
+            if colormap_gray:
+                plt.imshow(img,cmap='gray')
+            else:
+                plt.imshow(img)    
         plt.show()
 
     @staticmethod
