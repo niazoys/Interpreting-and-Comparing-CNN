@@ -125,9 +125,7 @@ class classLoader(Dataset):
         self.csv_file_path = './New_Dataset'
         root_dir = os.path.join(root_dir,"images") 
         self.root_dir = root_dir
-
-    # def __len__(self):
-    #     return len(self.fileNames)
+    
     def load_batch(self,idx,batch_size):
         image_data=torch.zeros([batch_size, 3, 227, 227])
         mask_data=torch.zeros([batch_size, 113, 113])
