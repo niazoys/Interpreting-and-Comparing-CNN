@@ -1,0 +1,13 @@
+Image,Annotations
+ade20k/ADE_train_00008254.jpg,ade20k/ADE_train_00008254_object.png
+ade20k/ADE_train_00011137.jpg,ade20k/ADE_train_00011137_object.png
+ade20k/ADE_train_00011357.jpg,ade20k/ADE_train_00011357_object.png
+ade20k/ADE_train_00008189.jpg,ade20k/ADE_train_00008189_object.png
+ade20k/ADE_train_00008190.jpg,ade20k/ADE_train_00008190_object.png
+ade20k/ADE_train_00003266.jpg,ade20k/ADE_train_00003266_object.png
+ade20k/ADE_train_00008256.jpg,ade20k/ADE_train_00008256_object.png
+ade20k/ADE_train_00006939.jpg,ade20k/ADE_train_00006939_object.png
+opensurfaces/70786.jpg,opensurfaces/70786_material.png
+opensurfaces/89423.jpg,opensurfaces/89423_material.png
+opensurfaces/84764.jpg,opensurfaces/84764_material.png
+opensurfaces/117257.jpg,opensurfaces/117257_material.png

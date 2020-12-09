@@ -1,0 +1,15 @@
+Image,Annotations
+ade20k/ADE_val_00000490.jpg,ade20k/ADE_val_00000490_object.png
+pascal/2009_000411.jpg,pascal/2009_000411_object.png
+pascal/2008_000259.jpg,pascal/2008_000259_object.png
+ade20k/ADE_train_00000553.jpg,ade20k/ADE_train_00000553_object.png
+ade20k/ADE_train_00006165.jpg,ade20k/ADE_train_00006165_object.png
+pascal/2008_001294.jpg,pascal/2008_001294_object.png
+ade20k/ADE_val_00001772.jpg,ade20k/ADE_val_00001772_object.png
+pascal/2008_001538.jpg,pascal/2008_001538_object.png
+pascal/2009_004501.jpg,pascal/2009_004501_object.png
+pascal/2008_002641.jpg,pascal/2008_002641_object.png
+pascal/2009_005297.jpg,pascal/2009_005297_object.png
+pascal/2009_002242.jpg,pascal/2009_002242_object.png
+pascal/2008_000489.jpg,pascal/2008_000489_object.png
+ade20k/ADE_train_00015064.jpg,ade20k/ADE_train_00015064_object.png
