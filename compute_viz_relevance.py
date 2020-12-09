@@ -23,7 +23,7 @@ def revelence_score_pipeline (x,mask,model,layer):
              Layer : The layer for which the relevance scores need to calculated. 
     OUTPUT :
             Raw Relevance attribution for entire layer. size 4D array (batch *Units * LayerInputSize)
-            Maked Relevance attribution for entire layer. size 4D array (batch *Units * LayerInputSize)
+            Maked (with ROI annotation) Relevance attribution for entire layer. size 4D array (batch *Units * LayerInputSize)
             Average Relevance score for each Neurons. size equivalent to number of units    
     '''
 
