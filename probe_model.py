@@ -22,17 +22,20 @@ from compute_iou import compute_iou
 
 
 class probe_model(nn.Module):
-    def __init__(self):
+    def __init__(self,half_mode=False):
         super(probe_model,self).__init__()
         self.model = models.resnet18(pretrained=True)
 
         # Get the GPU if available
         self.device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu")    
-        #self.device=torch.device("cpu")    
+        #self.device=torch.device("cpu")
+        
         # attach the model to cuda
-        #self.model.to(self.device)
-        # run in half precision modes
-        #print(self.model)
+        self.model.to(self.device)
+
+        # run in half precision modes for less memory consumption
+        if half_mode:
+            self.model.half()    
 
         
         # self.dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'

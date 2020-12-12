@@ -9,7 +9,7 @@ if __name__ == "__main__":
 
        
         #create object for model probe
-        pm=probe_model()
+        pm=probe_model(True)
 
         # create activation generator & visualizer object
         vis=VisualizeLayers(pm.get_model())
@@ -29,9 +29,9 @@ if __name__ == "__main__":
         # In how many part we want to do the calculation 
         part_ln=4
         # Total data 
-        total_data=100
+        total_data=60000
         #Batch Size
-        batch_size=25
+        batch_size=200
         #number of iteratio
         iteration=int((total_data/batch_size)/(part_ln))
         ###########################################  
@@ -58,7 +58,7 @@ if __name__ == "__main__":
             iou_part_list=[]
 
             for part in range(1,part_ln+1):
-               
+                print("Processing(Part " +str(part)+"):"+ layer)
                 featuremap=pm.probe(iteration=iteration,batch_size=batch_size,vis=vis,layer=layer,part_ln=part_ln,part=part)
                 
                 #Load the previously computed IoU 

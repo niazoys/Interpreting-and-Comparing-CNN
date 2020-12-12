@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
         ###########################################
         #create object for model probe
-        pm=probe_model()
+        pm=probe_model(True)
 
         # create activation generator & visualizer object
         vis=VisualizeLayers(pm.get_model())
@@ -22,7 +22,7 @@ if __name__ == "__main__":
         # Total data 
         total_data=60000
         #Batch Size
-        batch_size=100
+        batch_size=200
         #number of iteratio
         iteration=int((total_data/batch_size))
 
