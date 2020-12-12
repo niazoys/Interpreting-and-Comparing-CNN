@@ -29,12 +29,13 @@ class probe_model(nn.Module):
         # Get the GPU if available
         self.device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu")    
         #self.device=torch.device("cpu")
-        if half_mode:
-            self.model.half()    
+        
         # attach the model to cuda
         self.model.to(self.device)
-        # run in half precision modes
-        #print(self.model)
+
+        # run in half precision modes for less memory consumption
+        if half_mode:
+            self.model.half()    
 
         
         #self.dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
