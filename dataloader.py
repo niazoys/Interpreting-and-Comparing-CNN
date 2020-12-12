@@ -36,7 +36,7 @@ class imageLoader(Dataset):
             data_temp=self.__getitem__(i+self.data_counter)
             data[i]=data_temp.unsqueeze_(0)
         self.data_counter +=batch_size 
-        return data
+        return data.half()
 
 
     def __getitem__(self, idx):

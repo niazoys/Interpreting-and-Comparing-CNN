@@ -33,7 +33,6 @@ class compute_iou:
         #iterate over all the concepts
         for i in range(featuremask.shape[0]):
             #iterate over the Concept types
-            print(i)
             for concept in concept_pixel_level_types:
                 flag,concept_image=self.conLoader.load_concept(i,concept)
                 labels=np.unique(concept_image)

@@ -53,7 +53,7 @@ class Utility ():
             for unit_num in range(images_batch.shape[1]):
                 current_img=cv2.resize((images_batch[im_num,unit_num,:,:]).astype(np.float32), dsize=(113, 113), interpolation=cv2.INTER_CUBIC)
                 feature_mask[im_num,unit_num,:,:]=current_img>=tk[unit_num]
-        print("Feature Mask Generation Done.")
+        #print("Feature Mask Generation Done.")
         return feature_mask
     
     @staticmethod
