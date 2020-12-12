@@ -35,8 +35,8 @@ class probe_model(nn.Module):
         #print(self.model)
 
         
-        self.dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
-        #self.dataset_path='broden1_227'
+        # self.dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
+        self.dataset_path='broden1_227'
         
         #create dataloader
         self.imLoader= imageLoader(self.dataset_path)
