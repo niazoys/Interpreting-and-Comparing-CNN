@@ -169,7 +169,15 @@ class classLoader(Dataset):
             image = Image.open(img_name)
             px = np.array(image)
             sample = Image.fromarray(px)
-            sample = TF.to_tensor(sample) 
+            transform = transforms.Compose([
+                # transforms.Resize(256),
+                # transforms.CenterCrop(227),
+                transforms.ToTensor(),
+                # transforms.Normalize(
+                # mean=[0.485, 0.456, 0.406],
+                # std=[0.229, 0.224, 0.225])
+                ])
+            sample = transform(sample) 
         # sample.unsqueeze_(0)
         return self.c_flag, sample, mask
 
