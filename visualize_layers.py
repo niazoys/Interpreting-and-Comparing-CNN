@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from torch import nn
 
-class VisualizeLayers_(object):
+class VisualizeLayers(object):
     '''
     A class to visualize intermediate layer outputs
     '''

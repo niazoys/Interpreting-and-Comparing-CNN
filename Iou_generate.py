@@ -12,7 +12,10 @@ if __name__ == "__main__":
         pm=probe_model(True)
 
         # create activation generator & visualizer object
-        vis=VisualizeLayers(pm.get_model())
+        '''
+           Remember to change the 2nd argument to False for non Residual networks.(e.g. ALexnet ,VGG) 
+        '''
+        vis=VisualizeLayers(pm.get_model(),True)
         
         ##################
         """Snippet to view the weights"""

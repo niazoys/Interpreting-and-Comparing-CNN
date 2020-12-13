@@ -26,7 +26,7 @@ def revelence_score_pipeline (x,mask,model,layer):
             Maked (with ROI annotation) Relevance attribution for entire layer. size 4D array (batch *Units * LayerInputSize)
             Average Relevance score for each Neurons. size equivalent to number of units    
     '''
-
+    #x.to("cuda")
     #Get the prediction 
     out=model(x)
     max_val, preds = torch.max(out,dim=1)
@@ -52,39 +52,69 @@ def revelence_score_pipeline (x,mask,model,layer):
     
     return attribution,masked_attribution,relevance_score
 
+def model_eval(x,model,label):
+   
+    y=torch.ones([x.shape[0]])*label
+    #transfer the data to GPU 
+    x=x.to("cuda")
+    y=y.to("cuda")
+    
+    out =model(x)
+    
+    max_val, preds = torch.max(out,dim=1)
+    
+    total = x.shape[0]                 
+    correct = (preds == y).sum().item()
+    accuracy = (100 * correct)/total
+
+    return accuracy
+
 if  __name__ == "__main__":
     
    # Get the data and annotation mask 
     dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
     clLoader=classLoader(dataset_path)
-    # Dog=93 ,cat=105
    
-
     #Get the model
-    prober=probe_model()
+    '''
+    Remember to switch  the full(float32) computation mode by setting the 
+    2nd argument to False for non Residual networks.(e.g. ALexnet ,VGG) 
+    '''
+    prober=probe_model(False)
     model=prober.get_model()
     
     #Get the layers 
-    vis=VisualizeLayers(model)
+    '''
+    Remember to change the 2nd argument to False for non Residual networks.(e.g. ALexnet ,VGG) 
+    '''
+    vis=VisualizeLayers(model,True)
     names=vis.get_saved_layer_names()
     layer=vis.conv_layers[names[10]]
 
-    # #Load a single image
-    # x=Utility.load_single_image('C:\\Users\\Niaz\OneDrive\\StudyMaterials\\UBx\\TRDP2\\ICCNN\\Crack-The-CNN\\cat_01.jpg',load_mask=False)
-    # original_image=np.transpose(x.cpu().numpy().squeeze(),(1,2,0))
-    
-    # # a demo mask for testing 
-    # mask =np.zeros((batch_size,113,113))
-    # mask[:,25:95,25:95]=1
-    
-
-    class_selector = 93
+    # Dog=93 ,cat=105.mosque=1062,hen=830
+    class_selector =117
+    imagenet_label=908
     sample_count   = clLoader.get_length(class_selector)
     iterations     =int( np.floor(sample_count/100) )
     list_batch_relevance_score=[]
+    accuracy=0
     for i in range(3):
         
-        x,mask=clLoader.load_batch(class_selector,2)
+        x,mask=clLoader.load_batch(class_selector,100)
+      
+        acc=model_eval(x,model,imagenet_label)
+
+        accuracy+=acc
+
+
+
+        # for i in range(x.shape[0]):
+        #     plt.imshow (np.transpose(x[i,:,:,:].detach().numpy(),(1,2,0)))
+        #     plt.colorbar()
+        #     plt.show()
+        #     plt.imshow(mask[i,:,:])
+        #     plt.show()
+
 
         #Get relevance score 
         _,masked_attribution,batch_relevance_score=revelence_score_pipeline(x,mask,model,layer)

@@ -58,7 +58,7 @@ class Utility ():
     
     @staticmethod
     def load_single_image (path,load_mask):
-            '''Load a single image directly feed able to network'''' 
+            '''Load a single image directly feed able to network''' 
             img = Image.open(path)
 
             if load_mask:            

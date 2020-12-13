@@ -95,6 +95,15 @@
     # save_gradient_images(grayscale_integrated_grads, file_name_to_export + '_Integrated_G_gray')
     # print('Integrated gradients completed.')
 
+
+
+     # #Load a single image
+    # x=Utility.load_single_image('C:\\Users\\Niaz\OneDrive\\StudyMaterials\\UBx\\TRDP2\\ICCNN\\Crack-The-CNN\\cat_01.jpg',load_mask=False)
+    # original_image=np.transpose(x.cpu().numpy().squeeze(),(1,2,0))
+    
+    # # a demo mask for testing 
+    # mask =np.zeros((batch_size,113,113))
+    # mask[:,25:95,25:95]=1
 #################################################################################################################
 
 
