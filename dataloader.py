@@ -131,6 +131,7 @@ class classLoader(Dataset):
         mask_data=torch.zeros([batch_size, 113, 113])
         
         for i in range (batch_size):
+            # #array
             _flag,image_temp,mask_temp=self.load_class(idx,i+self.data_counter)
             image_data[i]=image_temp.unsqueeze_(0)
             mask_data[i]=mask_temp.unsqueeze_(0)
