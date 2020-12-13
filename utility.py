@@ -58,7 +58,7 @@ class Utility ():
     
     @staticmethod
     def load_single_image (path,load_mask):
-
+            '''Load a single image directly feed able to network'''' 
             img = Image.open(path)
 
             if load_mask:            
@@ -87,7 +87,7 @@ class Utility ():
     
     @staticmethod
     def show_many_images(imgs,num,colormap_gray=True):
-
+        """ Too show multiple images in grid fashion  """
         fig=plt.figure(figsize=(15, 15))
         columns = 6
         rows = 6

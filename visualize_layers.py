@@ -3,15 +3,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 from torch import nn
 
-class VisualizeLayers(object):
+class VisualizeLayers_(object):
     '''
     A class to visualize intermediate layer outputs
     '''
-    def __init__(self,model):
+    def __init__(self,model,type_residual=True):
         self.model=model
         self.interm_output = {}
         self.conv_layers=dict()
-        self.generate_layers_info(self.model)
+        if type_residual:
+            self.generate_layers_info(self.model)
+        else:
+            self.generate_layers_info_non_residualNetwork(self.model)
         if not os.path.exists('output_imgs'):
             os.makedirs('output_imgs')
     
@@ -20,10 +23,29 @@ class VisualizeLayers(object):
             self.interm_output[name] = output.detach()
         return hook
 
+    def generate_layers_info_non_residualNetwork(self,model):
+    
+        '''
+        Method iterates over the layer of model and put layer objects  in a list (Works for Non  resudual networks)
+        
+        Args:
+            model - () - pytorch model or layers
+        '''
+        layer_counter=0
+        for name, layer in model.features._modules.items():
+            if type(layer) == nn.Conv2d:
+                self.conv_layers[layer._get_name()+"_Layer"+str(name)]=layer
+                layer_counter=layer_counter+1
+    
+    
 
     def generate_layers_info(self,model):
+       
         '''
+        Method iterates over the layer of model and put layer objects  in a list (Works for resudual networks)
         
+        Args:
+            model - () - pytorch model or layers
         '''
         #get the children list of model 
         model_children=list(model.children())
@@ -38,13 +60,8 @@ class VisualizeLayers(object):
             elif type(model_children[i]) == nn.Sequential: 
                 layer_counter += 1   
                 local_counter = 0
-                # tmp1=model_children[i]
-                # print(tmp1)
                 for j in range(len(model_children[i])):
-                    # tmp2=model_children[i][j].children()
-                    # print(tmp2)
                     for child in model_children[i][j].children():
-                        
                         if type(child) == nn.Conv2d:
                             local_counter +=1
                             namepart="Layer"+str(layer_counter)+"_conv2d_"+str(local_counter)
@@ -157,14 +174,31 @@ class VisualizeLayers(object):
         plt.show()
 
 #%%        
-# if __name__=='__main__':  
-    
+if __name__=='__main__':  
+      from torchvision import models
 #     # load the Pytorch model
-#     model = models.resnet18(pretrained=True)
-#     # create an object of VisualizeLayers and initialize it with the model and 
-#     # the layers whose output you want to visualize
-    
-#     vis = VisualizeLayers(model)
+      model = models.vgg16(pretrained=True)
+      
+    #   model_children=list(model.children())
+    #   for i in range(len(model_children)):
+    #       print(model_children[i]._DenseLayer)
+          
+        #   for j in range(model_children[i].children()):
+        #     print(model_children[i][j])
+
+
+
+#       from pytorchvis.visualize_layers import VisualizeLayers
+# #     # create an object of VisualizeLayers and initialize it with the model and 
+# #     # the layers whose output you want to visualize
+     
+#       vis = VisualizeLayers(model,layers='conv')
+#       output_layers=vis.get_saved_layer_names()
+#       print(output_layers)
+      
+      v = VisualizeLayers_(model,False)
+      print(v.get_saved_layer_names())
+      
 #     # load the input
 #     x = torch.randn([1,3,224,224])
 #     # pass the input and get the output
