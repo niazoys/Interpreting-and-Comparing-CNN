@@ -92,7 +92,7 @@ if  __name__ == "__main__":
     layer=vis.conv_layers[names[10]]
 
     # Dog=93 ,cat=105.mosque=1062,hen=830
-    class_selector =117
+    class_selector =168
     imagenet_label=908
     sample_count   = clLoader.get_length(class_selector)
     iterations     =int( np.floor(sample_count/100) )
@@ -101,6 +101,13 @@ if  __name__ == "__main__":
     for i in range(3):
         
         x,mask=clLoader.load_batch(class_selector,100)
+
+        for i in range(x.shape[0]):
+            plt.imshow (np.transpose(x[i,:,:,:].detach().numpy(),(1,2,0)))
+            plt.colorbar()
+            plt.show()
+            plt.imshow(mask[i,:,:])
+            plt.show()        
       
         acc=model_eval(x,model,imagenet_label)
 
@@ -108,12 +115,7 @@ if  __name__ == "__main__":
 
 
 
-        # for i in range(x.shape[0]):
-        #     plt.imshow (np.transpose(x[i,:,:,:].detach().numpy(),(1,2,0)))
-        #     plt.colorbar()
-        #     plt.show()
-        #     plt.imshow(mask[i,:,:])
-        #     plt.show()
+
 
 
         #Get relevance score 

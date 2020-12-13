@@ -5,6 +5,8 @@ from dataloader import conceptLoader
 import numpy as np 
 from visualize_layers import VisualizeLayers
 from compute_qd import Compute_qd
+import gc
+import os
 
 if __name__ == "__main__":
 
@@ -36,6 +38,14 @@ if __name__ == "__main__":
 
         #get the names of the layers in the network 
         layer_names=vis.get_saved_layer_names()
+        
+        # Create Tk directory for the network
+        model_name = pm.get_model().__class__.__name__
+        cwd = os.getcwd()  
+        dir = os.path.join(cwd,"Tk",model_name)
+        if not os.path.exists(dir):
+            os.mkdir(dir)
+
 
         for layer in layer_names:
             tk=[]

@@ -4,6 +4,7 @@ from probe_model import probe_model
 from dataloader import conceptLoader
 import numpy as np 
 from visualize_layers import VisualizeLayers
+import os
 
 if __name__ == "__main__":
 
@@ -25,8 +26,15 @@ if __name__ == "__main__":
         existing_hook=False
             
         #dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
+        # self.dataset_path='E:\\TRDP_python\\Crack-The-CNN\\broden1_227'
         dataset_path='broden1_227'
         
+        # Create IOU directory for the network
+        model_name = pm.get_model().__class__.__name__
+        cwd = os.getcwd()  
+        dir = os.path.join(cwd,"IOU",model_name)
+        if not os.path.exists(dir):
+            os.mkdir(dir)
         
         ###########################################
         # In how many part we want to do the calculation 
