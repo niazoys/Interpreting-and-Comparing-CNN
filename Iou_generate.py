@@ -30,11 +30,11 @@ if __name__ == "__main__":
         dataset_path='broden1_227'
         
         # Create IOU directory for the network
-        model_name = pm.get_model().__class__.__name__
-        cwd = os.getcwd()  
-        dir = os.path.join(cwd,"IOU",model_name)
-        if not os.path.exists(dir):
-            os.mkdir(dir)
+        # model_name = pm.get_model().__class__.__name__
+        # cwd = os.getcwd()  
+        # dir = os.path.join(cwd,"IOU",model_name)
+        # if not os.path.exists(dir):
+        #     os.mkdir(dir)
         
         ###########################################
         # In how many part we want to do the calculation 
