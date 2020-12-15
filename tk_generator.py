@@ -36,6 +36,7 @@ if __name__ == "__main__":
 
         #get the names of the layers in the network 
         layer_names=vis.get_saved_layer_names()
+        
 
         for layer in layer_names:
             tk=[]
