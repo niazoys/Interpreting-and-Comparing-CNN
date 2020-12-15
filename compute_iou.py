@@ -56,11 +56,9 @@ class compute_iou:
                         for unit in range (featuremask.shape[1]):
                             for label in labels:
                                 one_matrix=np.ones((113,113))
-                                self.IoU(featuremask[i,unit,:,:],one_matrix,unit,label,concept_num)     
+                                self.IoU(featuremask[i,unit,:,:],one_matrix,unit,label,concept_num)    
+                concept_num+=1 
                       
 
     def get_iou(self):
-        iou=np.zeros(self.intersection_score.shape)
-        for concept_num in range(self.intersection_score.shape[2]):
-            iou[:,:,concept_num]=self.intersection_score[:,:,concept_num]/self.union_score[:,:,concept_num]
-        return iou
+        return self.intersection_score/self.union_score

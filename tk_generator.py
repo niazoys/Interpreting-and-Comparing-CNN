@@ -39,6 +39,7 @@ if __name__ == "__main__":
         #get the names of the layers in the network 
         layer_names=vis.get_saved_layer_names()
         
+<<<<<<< HEAD
         # # Create Tk directory for the network
         # model_name = pm.get_model().__class__.__name__
         # cwd = os.getcwd()  
@@ -46,6 +47,8 @@ if __name__ == "__main__":
         # if not os.path.exists(dir):
         #     os.mkdir(dir)
 
+=======
+>>>>>>> 1e918c348e195c9ee7fa69e70e3c8c4426024811
 
         for layer in layer_names:
             tk=[]
