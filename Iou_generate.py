@@ -32,9 +32,9 @@ if __name__ == "__main__":
         # In how many part we want to do the calculation 
         part_ln=4
         # Total data 
-        total_data=60
+        total_data=60000
         #Batch Size
-        batch_size=10
+        batch_size=200
         #number of iteratio
         iteration=int((total_data/batch_size)/(part_ln))
         ###########################################  
@@ -81,8 +81,7 @@ if __name__ == "__main__":
 
             #get the iou and save it 
             iou_full=np.vstack(iou_part_list)
-            for i in range(5):
-                print(iou_full[25,10,i])
+        
             np.save('IOU/resnet18/iou_'+str(layer)+'.npy',iou_full)
 
             #Delete the Iou Object  
