@@ -25,14 +25,8 @@ if __name__ == "__main__":
         # flag for hook tracking        
         existing_hook=False
             
-<<<<<<< HEAD
-        #dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
-        # self.dataset_path='E:\\TRDP_python\\Crack-The-CNN\\broden1_227'
+        # dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
         dataset_path='broden1_227'
-=======
-        dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
-        #dataset_path='broden1_227'
->>>>>>> f5ecd75f7e0c28fa836aad2f80b340523d9d2b4c
         
         # Create IOU directory for the network
         # model_name = pm.get_model().__class__.__name__
