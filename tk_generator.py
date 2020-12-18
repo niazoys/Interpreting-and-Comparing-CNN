@@ -5,6 +5,7 @@ from dataloader import conceptLoader
 import numpy as np 
 from visualize_layers import VisualizeLayers
 from compute_qd import Compute_qd
+import gc
 
 if __name__ == "__main__":
 
@@ -16,7 +17,7 @@ if __name__ == "__main__":
         '''
            Remember to change the 2nd argument to False for non Residual networks.(e.g. ALexnet ,VGG) 
         '''
-        vis=VisualizeLayers(pm.get_model(),True)
+        vis=VisualizeLayers(pm.get_model(),False)
         
         # falg for hook tracking        
         existing_hook=False
@@ -25,7 +26,7 @@ if __name__ == "__main__":
         # Total data 
         total_data=60000
         #Batch Size
-        batch_size=200
+        batch_size=150
         #number of iteratio
         iteration=int((total_data/batch_size))
 
@@ -36,9 +37,9 @@ if __name__ == "__main__":
 
         #get the names of the layers in the network 
         layer_names=vis.get_saved_layer_names()
-        
 
         for layer in layer_names:
+            print(layer)
             tk=[]
             #loop over all the convolutional layers  
             for part in range (1,part_ln+1):            
@@ -68,5 +69,5 @@ if __name__ == "__main__":
                 gc.collect()
             
             # save TK matrix    
-            np.save('TK/resnet18/tk_'+str(layer)+'.npy',tk)
+            np.save('TK/vgg/tk_'+str(layer)+'.npy',tk)
                 
