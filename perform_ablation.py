@@ -21,6 +21,7 @@ def model_eval(model,dataloader,label):
 
         #transfer the data to GPU 
         x=x.to("cuda")
+        
         #y=y.to("cuda")
         model.to("cuda")
         out = model(x)
@@ -58,15 +59,13 @@ def ablate(model,selected_class,Top,percentile):
     vis=VisualizeLayers(model,False)
     layer_names=vis.get_saved_layer_names()
     
-    for idx in range(len(layer_names)):
-        idx=2
-        
+    for idx in range(1,len(layer_names)-1):    
         # Get the layers
-        layer=vis.conv_layers[layer_names[idx+1]]
-        print(layer_names[idx+1])
+        layer=vis.conv_layers[layer_names[idx]]
+        print(layer_names[idx])
        
         # Load IG matrix
-        mat=np.load("IG/alexnet/IG_"+layer_names[idx+2]+"_class_0"+str(selected_class)+".npy")
+        mat=np.load("IG/alexnet/IG_"+layer_names[idx+1]+"_class_0"+str(selected_class)+".npy")
 
         # get the neuron index to be turned off 
         if Top:
