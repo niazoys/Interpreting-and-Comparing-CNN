@@ -104,6 +104,24 @@
     # # a demo mask for testing 
     # mask =np.zeros((batch_size,113,113))
     # mask[:,25:95,25:95]=1
+
+
+    # def model_eval(x,model,label):
+   
+    # y=torch.ones([x.shape[0]])*label
+    # #transfer the data to GPU 
+    # x=x.to("cuda")
+    # y=y.to("cuda")
+    
+    # out =model(x)
+    
+    # max_val, preds = torch.max(out,dim=1)
+    
+    # total = x.shape[0]                 
+    # correct = (preds == y).sum().item()
+    # accuracy = (100 * correct)/total
+
+    # return accuracy
 #################################################################################################################
 
 

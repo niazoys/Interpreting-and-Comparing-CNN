@@ -35,7 +35,6 @@ class Utility ():
         for im_num in range (images_batch.shape[0]):
             for unit_num in range(images_batch.shape[1]):
                 resized_ig[im_num,unit_num,:,:] = cv2.resize( images_batch[im_num,unit_num,:,:] , dsize=(113, 113), interpolation=cv2.INTER_CUBIC)
-        print("IG Resize Done.")
         return resized_ig
 
     @staticmethod

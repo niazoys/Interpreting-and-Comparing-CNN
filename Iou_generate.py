@@ -16,16 +16,17 @@ if __name__ == "__main__":
         '''
            Remember to change the 2nd argument to False for non Residual networks.(e.g. ALexnet ,VGG) 
         '''
-        vis=VisualizeLayers(pm.get_model(),True)
-        
-        ##################
-        """Snippet to view the weights"""
-        temp=vis.conv_layers['Conv2d_Layer0'].weight.data[1,:,:,:]
+        vis=VisualizeLayers(pm.get_model(),False)
+    
         #################
         # flag for hook tracking        
         existing_hook=False
             
+<<<<<<< HEAD
         # dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
+=======
+        #dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
+>>>>>>> ad0321a0e277519d682187e985d8c60925f87ca4
         dataset_path='broden1_227'
         
         # Create IOU directory for the network
@@ -53,7 +54,7 @@ if __name__ == "__main__":
 
         #loop over all the convolutional layers  
         for layer in layer_names:
-        
+            print(layer)
             #check if there is already any hook attached and remove it 
             if existing_hook:
                 vis.remove_all_hooks()
@@ -72,7 +73,7 @@ if __name__ == "__main__":
                 featuremap=pm.probe(iteration=iteration,batch_size=batch_size,vis=vis,layer=layer,part_ln=part_ln,part=part)
                 
                 #Load the previously computed IoU 
-                tk= np.load('TK/resnet18/tk_'+str(layer)+'.npy')
+                tk= np.load('TK/alexnet/tk_'+str(layer)+'.npy')
 
                 #Get the logical map from the featuremap 
                 featuremask=Utility.resize_image_bilinear_generate_mask_batch(featuremap,tk=tk)
@@ -89,7 +90,7 @@ if __name__ == "__main__":
             #get the iou and save it 
             iou_full=np.vstack(iou_part_list)
         
-            np.save('IOU/resnet18/iou_'+str(layer)+'.npy',iou_full)
+            np.save('IOU/alexnet/iou_'+str(layer)+'.npy',iou_full)
 
             #Delete the Iou Object  
             del iou
