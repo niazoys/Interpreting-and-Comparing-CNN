@@ -10,7 +10,7 @@ import torchvision
 from torchvision import models
 from dataloader import classLoader
 
-
+QT_DEBUG_PLUGINS=1 
 
     
 def model_eval(model,dataloader,label):
@@ -54,6 +54,16 @@ def get_class_dataLoader(path,batch_size):
     )
     return data_loader
 
+def autolabel(rects):
+    """Attach a text label above each bar in *rects*, displaying its height."""
+    for rect in rects:
+        height = rect.get_height()
+        ax.annotate('{:.2f}'.format(height),
+                    xy=(rect.get_x() + rect.get_width() / 2, height),
+                    xytext=(0, 3),  # 3 points vertical offset
+                    textcoords="offset points",
+                    ha='center', va='bottom')
+
 
 def ablate(model,selected_class,Top,percentile):
     vis=VisualizeLayers(model,False)
@@ -84,15 +94,70 @@ def ablate(model,selected_class,Top,percentile):
             layer.weight.data[num_unit,:,:,:]=0
             layer.bias.data[num_unit]=0
 
+
+ 
+ 
+
+
 if __name__ == "__main__":
-    model = models.alexnet(pretrained=True)
-    data_loader=get_class_dataLoader('n03891251/',20)
-    model.eval()
-    acc_before=model_eval(model,data_loader,703)
-    ablate(model,121,False,2)
-    model.eval()
-    acc_after=model_eval(model,data_loader,703)
+    percentile_list=[2,5,10]
     
-    print(acc_before,acc_after)
+    selected_class=121
+    selected_imagenet_class=703
+    data_loader=get_class_dataLoader('n03891251/',20)
+    model = models.alexnet(pretrained=True)
+    model.eval()
+    acc_before=[]
+    acc_top=[]
+    acc_bottom=[]
+
+    """Top percentile Testing Block"""
+    for percentile in percentile_list:
+        model = models.alexnet(pretrained=True)
+        model.eval()
+        acc_before.append(model_eval(model,data_loader,selected_imagenet_class))
+        ablate(model,selected_class,True,percentile)
+        acc_top.append(model_eval(model,data_loader,selected_imagenet_class))
+    
+    """Bottom percentile Testing Block"""
+    for percentile in percentile_list:
+        model = models.alexnet(pretrained=True)
+        model.eval()
+        ablate(model,selected_class,False,percentile)
+        acc_bottom.append(model_eval(model,data_loader,selected_imagenet_class))
+
+    
+
+    labels = ['Top-Bottom : 2%', 'Top-Bottom : 5%', 'Top-Bottom : 10%']
+   
+    x = np.arange(len(labels))  # the label locations
+    width = 0.20  # the width of the bars
+
+    fig, ax = plt.subplots()
+    rects = ax.bar(x -0.40, acc_before, width, label='Before Ablation')
+    rects1 = ax.bar(x - width/2, acc_top, width, label='Top')
+    rects2 = ax.bar(x + width/2, acc_bottom, width, label='Bottom')
+
+    # Add some text for labels, title and custom x-axis tick labels, etc.
+    ax.set_ylabel('Scores')
+    ax.set_title('Scores by Percentile')
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    ax.legend()
+
+    autolabel(rects)
+    autolabel(rects1)
+    autolabel(rects2)
+    fig.tight_layout()
+    plt.show()
+
+   
+    # # open file for writng the 
+    # f = open(str(model.__class__.__name__)+"ablation_test.txt", 'w')
+    # f.write("|class: "+str(selected_class)+" | Original Accuracy : = "+str(acc_after))
+    # f.write("|class: "+str(selected_class)+" | Accuracy (Top : "+str(percentile)+") :  = "+str(acc_after))
+    # f.write("\n")
+
+
     
     

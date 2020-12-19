@@ -55,7 +55,8 @@ def revelence_score_pipeline (x,mask,model,layer,attribute_to_layer_input):
 
 if  __name__ == "__main__":
     
-    device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu")    
+    device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu") 
+    #device=torch.device("cpu")   
     # Get the data and annotation mask 
     dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
     clLoader=classLoader(dataset_path)
@@ -65,18 +66,18 @@ if  __name__ == "__main__":
     Remember to switch  the full(float32) computation mode by setting the 
     2nd argument to False for non Residual networks.(e.g. ALexnet ,VGG) 
     '''
-    model = models.alexnet(pretrained=True)
+    model = models.resnet18(pretrained=True)
     model.to(device)
     #Get the layers 
     '''
     Remember to change the 2nd argument to False for non Residual networks.(e.g. ALexnet ,VGG) 
     '''
-    vis=VisualizeLayers(model,False)
+    vis=VisualizeLayers(model,True)
     layer_names=vis.get_saved_layer_names()
     
 
     # Dog=93 ,cat=105.mosque=1062,hen=830
-    class_list =[121,135,101,116,18,88,67,191,50]
+    class_list =[121,135,191,50,123,164]
     
    
     
@@ -85,7 +86,7 @@ if  __name__ == "__main__":
         layer=vis.conv_layers[layer_names[idx]]
         for selected_class in class_list:
             list_batch_relevance_score=[]
-            batch_size=7
+            batch_size=2
             clLoader.data_counter=0
             sample_count   = clLoader.get_length(selected_class)
             iterations     =int( np.floor(sample_count/batch_size) )
@@ -125,7 +126,7 @@ if  __name__ == "__main__":
             avg_relevance_score=np.average(relevance_score,axis=0)
             
             # save IG score    
-            np.save('IG/alexnet/IG_'+str(layer_names[idx])+'_class_0'+str(selected_class)+'.npy',avg_relevance_score)
+            np.save('IG/resnet18/IG_'+str(layer_names[idx])+'_class_0'+str(selected_class)+'.npy',avg_relevance_score)
 
             # plt.hist(avg_relevance_score, bins=8, histtype='barstacked')
             # plt.show()
