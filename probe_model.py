@@ -38,7 +38,10 @@ class probe_model(nn.Module):
             self.model.half()    
 
         
-        self.dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
+        # self.dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
+        # self.dataset_path='E:\\TRDP_python\\Crack-The-CNN\\broden1_227'
+        self.dataset_path='broden1_227'
+        # self.dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
         #self.dataset_path='broden1_227'
         
         #create dataloader
