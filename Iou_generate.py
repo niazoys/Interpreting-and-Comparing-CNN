@@ -22,11 +22,7 @@ if __name__ == "__main__":
         # flag for hook tracking        
         existing_hook=False
             
-<<<<<<< HEAD
         # dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
-=======
-        #dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
->>>>>>> ad0321a0e277519d682187e985d8c60925f87ca4
         dataset_path='broden1_227'
         
         # Create IOU directory for the network
