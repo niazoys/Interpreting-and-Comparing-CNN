@@ -72,15 +72,15 @@ if  __name__ == "__main__":
     '''
     Remember to change the 2nd argument to False for non Residual networks.(e.g. ALexnet ,VGG) 
     '''
-    vis=VisualizeLayers(model,True)
+    vis=VisualizeLayers(model)
     layer_names=vis.get_saved_layer_names()
     
 
     # Dog=93 ,cat=105.mosque=1062,hen=830
 
-    class_list =[88,116,121,123,135]
+    class_list =[50,88,191,121,123,135]
 
-    for idx in range(len(layer_names)):
+    for idx in range(1,len(layer_names)):
         layer=vis.conv_layers[layer_names[idx]]
         for selected_class in class_list:
             list_batch_relevance_score=[]
@@ -127,6 +127,7 @@ if  __name__ == "__main__":
             np.save('IG/resnet18/IG_'+str(layer_names[idx])+'_class_0'+str(selected_class)+'.npy',avg_relevance_score)
 
             # plt.hist(avg_relevance_score, bins=8, histtype='barstacked')
+            # plt.title("IG Score distribution for "+str(layer_names[idx]))
             # plt.show()
 
             

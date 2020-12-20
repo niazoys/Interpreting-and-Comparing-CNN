@@ -7,11 +7,11 @@ class VisualizeLayers(object):
     '''
     A class to visualize intermediate layer outputs
     '''
-    def __init__(self,model,type_residual=True):
+    def __init__(self,model):
         self.model=model
         self.interm_output = {}
         self.conv_layers=dict()
-        if type_residual:
+        if model.__class__.__name__=="ResNet":
             self.generate_layers_info(self.model)
         else:
             self.generate_layers_info_non_residualNetwork(self.model)
