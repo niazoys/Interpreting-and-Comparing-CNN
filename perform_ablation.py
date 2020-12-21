@@ -70,7 +70,7 @@ def ablate(model,selected_class,Top,percentile):
     vis=VisualizeLayers(model)
     layer_names=vis.get_saved_layer_names()
     
-    for idx in range(4,len(layer_names)-5):
+    for idx in range(4,len(layer_names)-4):
         # Get the layers
         layer=vis.conv_layers[layer_names[idx]]
         print(layer_names[idx])
@@ -101,16 +101,15 @@ def ablate(model,selected_class,Top,percentile):
 if __name__ == "__main__":
     percentile_list=[0.5,1,2]
     
-    broden_labels={'bench': 121, 'sea': 135, 'boat': 123,'refrigerator':191,'lamp':50}
-    imagenet_labels={'bench': 703, 'sea': 978, 'boat': 554,'refrigerator':760,'lamp':846}
+    broden_class={'bench': 121, 'sea': 135, 'boat': 123,'refrigerator':191,'lamp':50}
+    imagenet_class={'bench': 703, 'sea': 978, 'boat': 554,'refrigerator':760,'lamp':846}
 
 
-    # selected_class=121 
-    # selected_imagenet_class=703
-    for broden_name, broden_label in broden_labels.items():
-        for imgnet_name, imgnet_label in imagenet_labels.items():   
+    for broden_name, broden_label in broden_class.items():
+        for imgnet_name, imgnet_label in imagenet_class.items():   
 
-            data_loader=get_class_dataLoader('/',20)
+            data_loader=get_class_dataLoader(str(imgnet_name)+'/',20)
+          
             model = models.resnet18(pretrained=True)
             model.eval()
             acc_before=[]
@@ -121,20 +120,23 @@ if __name__ == "__main__":
             for percentile in percentile_list:
                 model = models.resnet18(pretrained=True)
                 model.eval()
-                acc_before.append(model_eval(model,data_loader,selected_imagenet_class))
-                ablate(model,selected_class,True,percentile)
-                acc_top.append(model_eval(model,data_loader,selected_imagenet_class))
+                acc_before.append(model_eval(model,data_loader,imgnet_label))
+                ablate(model,broden_label,True,percentile)
+                acc_top.append(model_eval(model,data_loader,imgnet_label))
             
             """Bottom percentile Testing Block"""
             for percentile in percentile_list:
                 model = models.resnet18(pretrained=True)
                 model.eval()
-                ablate(model,selected_class,False,percentile)
-                acc_bottom.append(model_eval(model,data_loader,selected_imagenet_class))
+                ablate(model,broden_label,False,percentile)
+                acc_bottom.append(model_eval(model,data_loader,imgnet_label))
 
             
+            ##
+            ## ploting Block 
+            ##
 
-            labels = ['Top-Bottom : 2%', 'Top-Bottom : 5%', 'Top-Bottom : 10%']
+            labels = ['Top-Bottom :'+str(percentile_list[0])+'%','Top-Bottom :'+str(percentile_list[1])+'%','Top-Bottom :'+str(percentile_list[2])+'%']
         
             x = np.arange(len(labels))  # the label locations
             width = 0.20  # the width of the bars
@@ -146,7 +148,7 @@ if __name__ == "__main__":
 
             # Add some text for labels, title and custom x-axis tick labels, etc.
             ax.set_ylabel('Scores')
-            ax.set_title('Scores by Percentile')
+            ax.set_title('Ablation: '+broden_name+' Tested: '+imgnet_name)
             ax.set_xticks(x)
             ax.set_xticklabels(labels)
             ax.legend()
@@ -156,16 +158,15 @@ if __name__ == "__main__":
             autolabel(ax,rects1)
             autolabel(ax,rects2)
             fig.tight_layout()
-            plt.show()
-            
-            #plt.savefig('output_imgs/resnet18/ablation: '+selected_class+'_Tested: '+imagenet_label+'.jpg')
+           
+            # plt.show() 
+            plt.savefig('output_imgs/resnet18/ablation_'+str(broden_name)+'_Tested_'+str(imgnet_name)+'.jpg')
 
-    print("a")
-    # # open file for writng the 
-    # f = open(str(model.__class__.__name__)+"ablation_test.txt", 'w')
-    # f.write("|class: "+str(selected_class)+" | Original Accuracy : = "+str(acc_after))
-    # f.write("|class: "+str(selected_class)+" | Accuracy (Top : "+str(percentile)+") :  = "+str(acc_after))
-    # f.write("\n")
+        # # open file for writng the 
+        # f = open(str(model.__class__.__name__)+"ablation_test.txt", 'w')
+        # f.write("|class: "+str(selected_class)+" | Original Accuracy : = "+str(acc_after))
+        # f.write("|class: "+str(selected_class)+" | Accuracy (Top : "+str(percentile)+") :  = "+str(acc_after))
+        # f.write("\n") 
 
 
     
