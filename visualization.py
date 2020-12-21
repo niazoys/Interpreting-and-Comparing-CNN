@@ -64,6 +64,41 @@ def get_concept_summary(top, num_concept_type,Network_name):
 
     return layer_names,values    
 
+def find_top_unit(iou,c_idx,t_percentage):
+    ''' takes input iou of a layer, concept id and the percentage
+    value which will determine the number of units with max iou
+    score to find out '''
+
+    # num of top units to compute
+    num_unit  = np.int(np.round(iou.shape[0]*t_percentage/100))
+    unit_list = np.zeros((num_unit)) 
+    
+    #iou score list of desired concept index
+    temp = iou[:,c_idx-1,:]
+    temp[np.isnan(temp)] = 0
+
+    for u in range(num_unit):
+        idx          = unravel_index(temp.argmax(), temp.shape)
+        unit_list[u] = idx[0]
+        temp[idx]    = 0    #Setting zero to discard from next iteration
+    
+    return unit_list
+
+def find_top_unit_IG(IG,t_percentage):
+    IG=np.load("E:\TRDP_II\ICNN\IG/alexnet/IG_Conv2d_Layer6_class_0101.npy")
+    # num of top units to compute
+    num_unit  = np.int(np.round(IG.shape[0]*t_percentage/100))
+
+    unit_list = np.zeros((num_unit)) 
+
+    for u in range(num_unit):
+        idx          = unravel_index(IG.argmax(), IG.shape)
+        unit_list[u] = idx[0]
+        IG[idx]    = 0    #Setting zero to discard from next iteration
+
+    return unit_list
+
+    
 if __name__ == "__main__":
     top = 3
     num_concept_type = 4
