@@ -16,17 +16,13 @@ if __name__ == "__main__":
         '''
            Remember to change the 2nd argument to False for non Residual networks.(e.g. ALexnet ,VGG) 
         '''
-        vis=VisualizeLayers(pm.get_model(),False)
+        vis=VisualizeLayers(pm.get_model())
     
         #################
         # flag for hook tracking        
         existing_hook=False
             
-<<<<<<< HEAD
-        # dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
-=======
         #dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
->>>>>>> ad0321a0e277519d682187e985d8c60925f87ca4
         dataset_path='broden1_227'
         
         # Create IOU directory for the network
@@ -38,13 +34,14 @@ if __name__ == "__main__":
         
         ###########################################
         # In how many part we want to do the calculation 
-        part_ln=4
+        part_ln=8
         # Total data 
         total_data=60000
         #Batch Size
         batch_size=200
         #number of iteratio
-        iteration=int((total_data/batch_size)/(part_ln))
+        iteration=int((total_data/batch_size))
+        #iteration=int((total_data/batch_size)/(part_ln))
         ###########################################  
 
 
@@ -66,6 +63,7 @@ if __name__ == "__main__":
             vis.hook_layers(layer)
             existing_hook=True
             iou=compute_iou(conceptLoader(dataset_path))
+            
             iou_part_list=[]
 
             for part in range(1,part_ln+1):
@@ -78,14 +76,24 @@ if __name__ == "__main__":
                 #Get the logical map from the featuremap 
                 featuremask=Utility.resize_image_bilinear_generate_mask_batch(featuremap,tk=tk)
                 
+                # import matplotlib.pyplot as plt
+                # for i in range(featuremask.shape[1]): 
+                #     plt.imshow(featuremask[5,i,:,:])
+                #     plt.show()
+
+
                 #Intialize the Union and Intersection matrices for the first time.
-                if iou_mat_flag:
-                    iou.intialize_matrices(featuremask.shape[1])
-                    iou_mat_flag=False
+                iou.intialize_matrices(featuremask.shape[1])
+                
+                
+              
 
                 #Compute Iou 
                 iou.do_calculation(featuremask)
                 iou_part_list.append(iou.get_iou())
+
+                #set the data counter to zero for next iteration
+                pm.imLoader.data_counter=0
 
             #get the iou and save it 
             iou_full=np.vstack(iou_part_list)
@@ -95,5 +103,27 @@ if __name__ == "__main__":
             #Delete the Iou Object  
             del iou
 
-            #set the data counter to zero for next iteration
-            pm.imLoader.data_counter=0
+
+# %%%
+import numpy as np
+from numpy import unravel_index
+mat=np.load('IOU/iou_Conv2d_Layer0.npy')  
+mat=np.array(mat)
+# mat=mat[:,1:,:]
+
+
+print(mat.shape) 
+print(mat.argmax())      
+print(unravel_index(mat.argmax(),mat.shape))
+print(mat[0,0,5])
+
+# def get_unique_labels(annotation_map):
+#     labels=np.unique(annotation_map)
+#     idx = np.where(labels==0)
+#     new_labels = np.delete(labels, idx)
+#     return new_labels
+# arr=[1,2,4,0,5,6,7]
+# print(get_unique_labels(arr))
+
+
+# %%

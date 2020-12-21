@@ -24,7 +24,7 @@ from compute_iou import compute_iou
 class probe_model(nn.Module):
     def __init__(self,half_mode=False):
         super(probe_model,self).__init__()
-        self.model = models.vgg16(pretrained=True)
+        self.model = models.alexnet(pretrained=True)
 
         # Get the GPU if available
         self.device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu")    
@@ -38,7 +38,7 @@ class probe_model(nn.Module):
             self.model.half()    
 
         
-        # self.dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
+        #self.dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
         # self.dataset_path='E:\\TRDP_python\\Crack-The-CNN\\broden1_227'
         self.dataset_path='broden1_227'
         # self.dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
@@ -112,7 +112,7 @@ class probe_model(nn.Module):
                 for n in range (0,bound+1,self.step):
                     self.idx_list.append(n)
                 idx_flag=False
-
+           
             
             interm_output_list=interm_output_list[:, self.idx_list[part-1]: self.idx_list[part],:,:]
             

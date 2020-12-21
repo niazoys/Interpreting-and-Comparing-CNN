@@ -47,7 +47,7 @@ def get_concept_summary(top, num_concept_type,Network_name):
 
     #create object for model probe
     pm=probe_model(True)
-    vis=VisualizeLayers(pm.get_model(),True)
+    vis=VisualizeLayers(pm.get_model())
     #get the names of the layers in the network 
     layer_names=vis.get_saved_layer_names()
 
@@ -56,7 +56,8 @@ def get_concept_summary(top, num_concept_type,Network_name):
     for l in range(np.size(layer_names)):
 
         #Load IOU of the current layer
-        iou=np.load('IOU/resnet18/iou_'+str(layer_names[l])+'.npy')
+        iou=np.load('IOU/alexnet/iou_'+str(layer_names[l])+'.npy')
+        #iou=np.load('IOU/iou_Conv2d_Layer0.npy')  
 
         value = get_summary(iou,top,num_concept_type)
         values[:,:,l] = value

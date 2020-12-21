@@ -72,70 +72,15 @@ if  __name__ == "__main__":
     '''
     Remember to change the 2nd argument to False for non Residual networks.(e.g. ALexnet ,VGG) 
     '''
-    vis=VisualizeLayers(model,True)
+    vis=VisualizeLayers(model)
     layer_names=vis.get_saved_layer_names()
     
 
     # Dog=93 ,cat=105.mosque=1062,hen=830
-<<<<<<< HEAD
-    class_list =[121,135,191,50,123,164]
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-    class_selector =168
-    imagenet_label=908
-    sample_count   = clLoader.get_length(class_selector)
-    iterations     =int( np.floor(sample_count/100) )
-    list_batch_relevance_score=[]
-    accuracy=0
-    for i in range(3):
-        
-        x,mask=clLoader.load_batch(class_selector,100)
 
-        for i in range(x.shape[0]):
-            plt.imshow (np.transpose(x[i,:,:,:].detach().numpy(),(1,2,0)))
-            plt.colorbar()
-            plt.show()
-            plt.imshow(mask[i,:,:])
-            plt.show()        
-      
-        acc=model_eval(x,model,imagenet_label)
+    class_list =[50,88,191,121,123,135]
 
-        accuracy+=acc
-
-
-
-
-
-
-        #Get relevance score 
-        _,masked_attribution,batch_relevance_score=revelence_score_pipeline(x,mask,model,layer)
-
-        #visualize the masked maps 
-        # _ = vizu.visualize_image_attr(np.expand_dims(masked_attribution[:,10,:,:],axis=2),sign="absolute_value",
-        #                 show_colorbar=True, title="IG")
-        
-        # #show many images 
-        im_sample=1
-        Utility.show_many_images((masked_attribution[im_sample,:,:,:]),36,False)
-        
-        # for i in range(5):
-        #     plt.imshow ((masked_attribution[im_sample,i,:,:]))
-        #     plt.colorbar()
-        #     plt.show()
-        list_batch_relevance_score.append (batch_relevance_score)
-=======
-    class_list =[88,116,121,123,135]
->>>>>>> f5ecd75f7e0c28fa836aad2f80b340523d9d2b4c
-=======
-    class_list =[121,135,101,116,18,88,67,191,50]
->>>>>>> ad0321a0e277519d682187e985d8c60925f87ca4
->>>>>>> b30ee8766dc7faffb18b38acbad1038f9629ffc8
-    
-   
-    
-
-    for idx in range(len(layer_names)):
+    for idx in range(1,len(layer_names)):
         layer=vis.conv_layers[layer_names[idx]]
         for selected_class in class_list:
             list_batch_relevance_score=[]
@@ -182,6 +127,7 @@ if  __name__ == "__main__":
             np.save('IG/resnet18/IG_'+str(layer_names[idx])+'_class_0'+str(selected_class)+'.npy',avg_relevance_score)
 
             # plt.hist(avg_relevance_score, bins=8, histtype='barstacked')
+            # plt.title("IG Score distribution for "+str(layer_names[idx]))
             # plt.show()
 
             
