@@ -98,7 +98,7 @@ if __name__ == "__main__":
             #get the iou and save it 
             iou_full=np.vstack(iou_part_list)
         
-            np.save('IOU/alexnet/iou_'+str(layer)+'.npy',iou_full)
+            np.save('IOU/vgg/iou_'+str(layer)+'.npy',iou_full)
 
             #Delete the Iou Object  
             del iou
