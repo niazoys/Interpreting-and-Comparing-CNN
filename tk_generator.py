@@ -6,10 +6,7 @@ import numpy as np
 from visualize_layers import VisualizeLayers
 from compute_qd import Compute_qd
 import gc
-<<<<<<< HEAD
 import os
-=======
->>>>>>> ad0321a0e277519d682187e985d8c60925f87ca4
 
 if __name__ == "__main__":
 

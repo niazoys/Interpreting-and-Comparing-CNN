@@ -24,7 +24,7 @@ from compute_iou import compute_iou
 class probe_model(nn.Module):
     def __init__(self,half_mode=False):
         super(probe_model,self).__init__()
-        self.model = models.alexnet(pretrained=True)
+        self.model = models.resnet18(pretrained=True)
 
         # Get the GPU if available
         self.device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu")    

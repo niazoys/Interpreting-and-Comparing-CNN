@@ -28,8 +28,13 @@ def revelence_score_pipeline (x,mask,model,layer,attribute_to_layer_input):
    
     #Get the prediction 
     
+   
+    
+   
+    
     max_val, preds = torch.max(model(x),dim=1)
 
+   
     #Initiate layer IG object
     layer_ig=LayerIntegratedGradients(model,layer)
 
@@ -49,6 +54,16 @@ def revelence_score_pipeline (x,mask,model,layer,attribute_to_layer_input):
     #calculate the relevance score per unit 
     relevance_score =np.sum(np.sum(abs(masked_attribution),axis=3),axis=2)
     
+    # plt.imshow(mask[1,:,:])
+    # plt.show()
+    # plt.imshow(np.transpose(x[1,:,:,:].cpu().numpy(),(1,2,0)))
+    # plt.show()
+    # plt.imshow(attribution[1,50,:,:],cmap='gray')
+    # plt.show()
+    # plt.imshow(masked_attribution[1,50,:,:],cmap='gray')
+    # plt.show()
+    
+    
     return attribution,masked_attribution,relevance_score
 
 
@@ -58,7 +73,8 @@ if  __name__ == "__main__":
     device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu") 
     #device=torch.device("cpu")   
     # Get the data and annotation mask 
-    dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
+    dataset_path='broden1_227'
+    #dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
     clLoader=classLoader(dataset_path)
    
     #Get the model
@@ -66,7 +82,7 @@ if  __name__ == "__main__":
     Remember to switch  the full(float32) computation mode by setting the 
     2nd argument to False for non Residual networks.(e.g. ALexnet ,VGG) 
     '''
-    model = models.resnet18(pretrained=True)
+    model = models.vgg16(pretrained=True)
     model.to(device)
     #Get the layers 
     '''
@@ -78,13 +94,13 @@ if  __name__ == "__main__":
 
     # Dog=93 ,cat=105.mosque=1062,hen=830
 
-    class_list =[50,88,191,121,123,135]
+    class_list =[123,50,88,191,121,135]
 
     for idx in range(1,len(layer_names)):
-        layer=vis.conv_layers[layer_names[idx]]
+        layer=vis.conv_layers[layer_names[3]]
         for selected_class in class_list:
             list_batch_relevance_score=[]
-            batch_size=2
+            batch_size=5
             clLoader.data_counter=0
             sample_count   = clLoader.get_length(selected_class)
             iterations     =int( np.floor(sample_count/batch_size) )
@@ -124,7 +140,7 @@ if  __name__ == "__main__":
             avg_relevance_score=np.average(relevance_score,axis=0)
             
             # save IG score    
-            np.save('IG/resnet18/IG_'+str(layer_names[idx])+'_class_0'+str(selected_class)+'.npy',avg_relevance_score)
+            np.save('IG/vgg/IG_'+str(layer_names[idx])+'_class_0'+str(selected_class)+'.npy',avg_relevance_score)
 
             # plt.hist(avg_relevance_score, bins=8, histtype='barstacked')
             # plt.title("IG Score distribution for "+str(layer_names[idx]))
