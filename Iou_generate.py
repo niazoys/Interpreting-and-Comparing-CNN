@@ -34,7 +34,7 @@ if __name__ == "__main__":
         
         ###########################################
         # In how many part we want to do the calculation 
-        part_ln=8
+        part_ln=4
         # Total data 
         total_data=60000
         #Batch Size
@@ -47,8 +47,6 @@ if __name__ == "__main__":
 
         #get the names of the layers in the network 
         layer_names=vis.get_saved_layer_names()
-        
-
         #loop over all the convolutional layers  
         for layer in layer_names:
             print(layer)
@@ -71,10 +69,12 @@ if __name__ == "__main__":
                 featuremap=pm.probe(iteration=iteration,batch_size=batch_size,vis=vis,layer=layer,part_ln=part_ln,part=part)
                 
                 #Load the previously computed IoU 
-                tk= np.load('TK/alexnet/tk_'+str(layer)+'.npy')
+                tk= np.load('TK/resnet18/tk_'+str(layer)+'.npy')
 
                 #Get the logical map from the featuremap 
                 featuremask=Utility.resize_image_bilinear_generate_mask_batch(featuremap,tk=tk)
+                
+                del featuremap
                 
                 # import matplotlib.pyplot as plt
                 # for i in range(featuremask.shape[1]): 
@@ -85,15 +85,18 @@ if __name__ == "__main__":
                 #Intialize the Union and Intersection matrices for the first time.
                 iou.intialize_matrices(featuremask.shape[1])
                 
-                
-              
-
+    
                 #Compute Iou 
                 iou.do_calculation(featuremask)
+                
+                del featuremask
+                
                 iou_part_list.append(iou.get_iou())
 
                 #set the data counter to zero for next iteration
                 pm.imLoader.data_counter=0
+
+                
 
             #get the iou and save it 
             iou_full=np.vstack(iou_part_list)
@@ -105,17 +108,17 @@ if __name__ == "__main__":
 
 
 # %%%
-import numpy as np
-from numpy import unravel_index
-mat=np.load('IOU/iou_Conv2d_Layer0.npy')  
-mat=np.array(mat)
-# mat=mat[:,1:,:]
+# import numpy as np
+# from numpy import unravel_index
+# mat=np.load('IOU/iou_Conv2d_Layer0.npy')  
+# mat=np.array(mat)
+# # mat=mat[:,1:,:]
 
 
-print(mat.shape) 
-print(mat.argmax())      
-print(unravel_index(mat.argmax(),mat.shape))
-print(mat[0,0,5])
+# print(mat.shape) 
+# print(mat.argmax())      
+# print(unravel_index(mat.argmax(),mat.shape))
+# print(mat[0,0,5])
 
 # def get_unique_labels(annotation_map):
 #     labels=np.unique(annotation_map)
