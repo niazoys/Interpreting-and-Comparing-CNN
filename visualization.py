@@ -4,7 +4,22 @@ import numpy as np
 from numpy import unravel_index
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+import seaborn as sns
 
+def gen_IG_visualization(IG_table,Layer_names,Class_labels):
+    
+    '''
+    It plots the IG score summary 
+    IG_table dimension = #class_label x # Layer_names
+
+    '''
+    fig, ax = plt.subplots(figsize=(5,8))
+    xticklabels=Layer_names
+    yticklabels=Class_labels
+    ax = sns.heatmap(IG_table, xticklabels=xticklabels, yticklabels=yticklabels, linewidth=0.2)
+    plt.xlabel('Layers')
+    plt.ylabel('Class')
+    plt.show()
 
 def generate_TopThreeIOU(iou,top):
     ''' Computes top three IOU score per unit

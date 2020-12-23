@@ -34,11 +34,11 @@ if __name__ == "__main__":
         
         ###########################################
         # In how many part we want to do the calculation 
-        part_ln=4
+        part_ln=16
         # Total data 
         total_data=60000
         #Batch Size
-        batch_size=200
+        batch_size=150
         #number of iteratio
         iteration=int((total_data/batch_size))
         #iteration=int((total_data/batch_size)/(part_ln))
@@ -69,7 +69,7 @@ if __name__ == "__main__":
                 featuremap=pm.probe(iteration=iteration,batch_size=batch_size,vis=vis,layer=layer,part_ln=part_ln,part=part)
                 
                 #Load the previously computed IoU 
-                tk= np.load('TK/resnet18/tk_'+str(layer)+'.npy')
+                tk= np.load('TK/vgg11/tk_'+str(layer)+'.npy')
 
                 #Get the logical map from the featuremap 
                 featuremask=Utility.resize_image_bilinear_generate_mask_batch(featuremap,tk=tk)
@@ -101,7 +101,7 @@ if __name__ == "__main__":
             #get the iou and save it 
             iou_full=np.vstack(iou_part_list)
         
-            np.save('IOU/vgg/iou_'+str(layer)+'.npy',iou_full)
+            np.save('IOU/vgg11/iou_'+str(layer)+'.npy',iou_full)
 
             #Delete the Iou Object  
             del iou

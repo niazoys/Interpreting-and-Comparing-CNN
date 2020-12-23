@@ -78,5 +78,5 @@ if __name__ == "__main__":
                 gc.collect()
             
             # save TK matrix    
-            np.save('TK/vgg/tk_'+str(layer)+'.npy',tk)
+            np.save('TK/vgg11/tk_'+str(layer)+'.npy',tk)
                 
