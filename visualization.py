@@ -137,3 +137,10 @@ if __name__ == "__main__":
         plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower right',
             ncol=1, mode="expand", borderaxespad=0.)
         plt.show()
+    
+
+
+    a = np.random.randint(1,10,size=(5,8))
+    Layer_names = ['conv1','conv2','conv3','conv4','conv5','conv6','conv7','conv8']
+    Class_labels = ['tina','mona','ayes','ms','pudding']
+    gen_IG_visualization(a,Layer_names,Class_labels)
