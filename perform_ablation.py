@@ -69,14 +69,14 @@ def ablate(model,selected_class,Top,percentile):
    
     vis=VisualizeLayers(model)
     layer_names=vis.get_saved_layer_names()
-    
-    for idx in range(4,len(layer_names)-4):
+    print(layer_names)
+    for idx in range(1,len(layer_names)-1):
         # Get the layers
         layer=vis.conv_layers[layer_names[idx]]
         print(layer_names[idx])
        
         # Load IG matrix
-        mat=np.load("IG/resnet18/IG_"+layer_names[idx+1]+"_class_0"+str(selected_class)+".npy")
+        mat=np.load("IG/vgg/IG_"+layer_names[idx+1]+"_class_0"+str(selected_class)+".npy")
 
         # get the neuron index to be turned off 
         if Top:
@@ -110,7 +110,7 @@ if __name__ == "__main__":
 
             data_loader=get_class_dataLoader(str(imgnet_name)+'/',20)
           
-            model = models.resnet18(pretrained=True)
+            model = models.vgg11(pretrained=True)
             model.eval()
             acc_before=[]
             acc_top=[]
@@ -118,7 +118,7 @@ if __name__ == "__main__":
 
             """Top percentile Testing Block"""
             for percentile in percentile_list:
-                model = models.resnet18(pretrained=True)
+                model = models.vgg11(pretrained=True)
                 model.eval()
                 acc_before.append(model_eval(model,data_loader,imgnet_label))
                 ablate(model,broden_label,True,percentile)
@@ -126,7 +126,7 @@ if __name__ == "__main__":
             
             """Bottom percentile Testing Block"""
             for percentile in percentile_list:
-                model = models.resnet18(pretrained=True)
+                model = models.vgg11(pretrained=True)
                 model.eval()
                 ablate(model,broden_label,False,percentile)
                 acc_bottom.append(model_eval(model,data_loader,imgnet_label))
@@ -148,7 +148,7 @@ if __name__ == "__main__":
 
             # Add some text for labels, title and custom x-axis tick labels, etc.
             ax.set_ylabel('Scores')
-            ax.set_title('Ablation: '+broden_name+' Tested: '+imgnet_name)
+            ax.set_title('ablation: '+str(broden_name)+'_Tested: '+str(imgnet_name)+'.jpg')
             ax.set_xticks(x)
             ax.set_xticklabels(labels)
             ax.legend()
@@ -159,8 +159,8 @@ if __name__ == "__main__":
             autolabel(ax,rects2)
             fig.tight_layout()
            
-            # plt.show() 
-            plt.savefig('output_imgs/resnet18/ablation_'+str(broden_name)+'_Tested_'+str(imgnet_name)+'.jpg')
+            #plt.show() 
+            plt.savefig('output_imgs/vgg/ablation'+str(broden_name)+'_Tested'+str(imgnet_name)+'.jpg')
 
         # # open file for writng the 
         # f = open(str(model.__class__.__name__)+"ablation_test.txt", 'w')
@@ -170,4 +170,4 @@ if __name__ == "__main__":
 
 
     
-from visualization import generate_TopThreeIOU
+    
