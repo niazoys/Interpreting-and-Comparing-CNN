@@ -61,7 +61,7 @@ def get_concept_summary(top, num_concept_type,Network_name):
     '''
 
     #create object for model probe
-    pm=probe_model(True)
+    pm=probe_model(Network_name)
     vis=VisualizeLayers(pm.get_model())
     #get the names of the layers in the network 
     layer_names=vis.get_saved_layer_names()
@@ -80,9 +80,11 @@ def get_concept_summary(top, num_concept_type,Network_name):
     return layer_names,values    
 
 def find_top_unit(iou,c_idx,t_percentage):
-    ''' takes input iou of a layer, concept id and the percentage
+    ''' 
+    takes input iou of a layer, concept id and the percentage
     value which will determine the number of units with max iou
-    score to find out '''
+    score to find out 
+    '''
 
     # num of top units to compute
     num_unit  = np.int(np.round(iou.shape[0]*t_percentage/100))
@@ -100,6 +102,11 @@ def find_top_unit(iou,c_idx,t_percentage):
     return unit_list
 
 def find_top_unit_IG(IG,t_percentage):
+    '''
+    Takes input a IG map and a percentage. Based on the percentage, computes the 
+    top units. For instance, 64 unit IG with a percentage of 10%, will return a 
+    list of location with top 6 unit's index.
+    '''
     IG=np.load("E:\TRDP_II\ICNN\IG/alexnet/IG_Conv2d_Layer6_class_0101.npy")
     # num of top units to compute
     num_unit  = np.int(np.round(IG.shape[0]*t_percentage/100))
@@ -113,7 +120,55 @@ def find_top_unit_IG(IG,t_percentage):
 
     return unit_list
 
-    
+# THIS FUNCTIONS ARE NEEDED TO GENERATE VISUALIZATION FOR IOU
+
+def reshape_mat(mat,nrows):
+    n_unit   = mat.shape[0]
+    padding  = nrows-n_unit%nrows
+    temp_mat = np.concatenate((mat,-1*np.ones(padding)))
+    new_mat  = temp_mat.reshape(nrows,-1)
+    return new_mat
+
+def vis_iou_score_dist_per_layer(Network_name):
+    '''
+    generates a heatmap using the top IOU scores per layer in the network
+    '''
+    #create object for model probe
+    pm=probe_model(Network_name)
+    vis=VisualizeLayers(pm.get_model())
+    #get the names of the layers in the network 
+    layer_names=vis.get_saved_layer_names()
+
+    values = np.zeros((top,num_concept_type,np.size(layer_names)))
+
+    for l in range(np.size(layer_names)):
+
+        #Load IOU of the current layer
+        iou=np.load('IOU/alexnet/iou_'+str(layer_names[l])+'.npy')
+        #iou=np.load('IOU/iou_Conv2d_Layer0.npy')  
+
+        value = get_summary(iou,top,num_concept_type)
+        values[:,:,l] = value
+    fig_ratio      = np.ones(3)
+    colorbar_ratio = np.array([0.08])
+    width_ratios_=np.concatenate((fig_ratio,colorbar_ratio))
+    fig, ax= plt.subplots(1,4, 
+                gridspec_kw={'width_ratios':width_ratios_})
+
+    for i in range(3):
+        g = sns.heatmap(a,cmap="YlGnBu",cbar=False,ax=ax[i])
+        g.set_xlabel(str(i))
+        g.set_xticks([])
+        g.set_yticks([])
+        if i==0:
+            g.set_ylabel('Units')
+
+    g3 = sns.heatmap(a,cmap="YlGnBu",ax=ax3, cbar_ax=ax[3])
+    g3.set_ylabel('')
+    g3.set_xlabel('')
+    g3.set_yticks([])
+    plt.show()
+
 if __name__ == "__main__":
     top = 3
     num_concept_type = 4
