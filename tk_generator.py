@@ -18,7 +18,7 @@ if __name__ == "__main__":
         '''
            Remember to change the 2nd argument to False for non Residual networks.(e.g. ALexnet ,VGG) 
         '''
-        vis=VisualizeLayers(pm.get_model(),False)
+        vis=VisualizeLayers(pm.get_model())
         
         # falg for hook tracking        
         existing_hook=False
@@ -32,7 +32,7 @@ if __name__ == "__main__":
         iteration=int((total_data/batch_size))
 
         # in how many parts we want to do the calculation (Must be even Number)
-        part_ln=4
+        part_ln = 16
         
         ###########################################  
 
@@ -78,5 +78,5 @@ if __name__ == "__main__":
                 gc.collect()
             
             # save TK matrix    
-            np.save('TK/vgg/tk_'+str(layer)+'.npy',tk)
+            np.save('TK/vgg11/tk_'+str(layer)+'.npy',tk)
                 
