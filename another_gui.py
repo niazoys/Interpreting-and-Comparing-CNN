@@ -19,8 +19,8 @@ class NetStat(QWidget):
         super(NetStat, self).__init__()
 
         self.setWindowTitle("Network Statistics")
-        self.y=200
-        self.x=500
+        self.y=50
+        self.x=300
         self.width = 500
         self.height = 500
         self.setGeometry(self.x,self.y,self.width,self.height)
@@ -52,8 +52,9 @@ class NetStat(QWidget):
         #Placeholder for images 
         self.imageCanvas_stat=QLabel() 
         self.imageCanvas_stat.setAlignment(Qt.AlignCenter)
-       
-       
+        pixmap=QPixmap('gui_resources/black.jpg')
+        self.showImage(pixmap)
+        
         #Navigation Keys
         self.fig_label=QLabel("Iou")
         self.fig_label.setAlignment(Qt.AlignCenter)
@@ -81,7 +82,7 @@ class NetStat(QWidget):
         self.show()
     
     def showImage(self,pixmap): 
-        pixmap = pixmap.scaled(450, 450)
+        pixmap = pixmap.scaled(500, 50)
         self.imageCanvas_stat.setMaximumHeight(pixmap.height())
         self.imageCanvas_stat.setMaximumWidth(pixmap.width())
         self.imageCanvas_stat.setPixmap(pixmap)
