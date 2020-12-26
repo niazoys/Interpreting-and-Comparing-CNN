@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import seaborn as sns
+from numpy import unravel_index
 
 class visualize_network():
     def __init__(self,net_name,nrows = 25):
@@ -65,22 +66,30 @@ class visualize_network():
         top_iou = self.reshape_mat(top_iou)
         return top_iou
 
-def generate_TopThreeIOU(iou,top):
-    ''' Computes top three IOU score per unit
-    '''
-    iou_summary = {"concept_idx":np.zeros((top,iou.shape[0])),
-    "concept_type":np.zeros((top,iou.shape[0]))
-                    }
-    for u in range(iou.shape[0]):
-        U_iou = iou[u,:,:]
+    def generate_TopThreeIOU(self,iou,top):
+        ''' Computes top three IOU score per unit
+        '''
+        iou_summary = {"concept_idx":np.zeros((top,iou.shape[0])),
+        "concept_type":np.zeros((top,iou.shape[0]))
+                        }
+        for u in range(iou.shape[0]):
+            U_iou = iou[u,:,:]
 
-        for t in range(top):
-            idx =unravel_index(U_iou.argmax(), U_iou.shape)
-            iou_summary["concept_idx"][t,u]=idx[0]
-            iou_summary["concept_type"][t,u]=idx[1]
-            U_iou[idx]=0
+            for t in range(top):
+                idx =unravel_index(U_iou.argmax(), U_iou.shape)
+                iou_summary["concept_idx"][t,u]=idx[0]
+                iou_summary["concept_type"][t,u]=idx[1]
+                U_iou[idx]=0
 
-    return iou_summary
+        return iou_summary
+
+        def reshape_mat(self,mat):
+            n_unit   = mat.shape[0]
+            padding  = self.nrows-n_unit%self.nrows
+            temp_mat = np.concatenate((mat,-1*np.ones(padding)))
+            new_mat  = temp_mat.reshape(self.nrows,-1)
+            return new_mat
+
 
     def reshape_mat(self,mat):
         n_unit   = mat.shape[0]
