@@ -141,7 +141,7 @@ if __name__ == "__main__":
             x = np.arange(len(labels))  # the label locations
             width = 0.20  # the width of the bars
 
-            fig, ax = plt.subplots(figsize=(10,10))
+            fig, ax = plt.subplots(figsize=(9,7))
             rects = ax.bar(x -0.40, acc_before, width, label='Before Ablation')
             rects1 = ax.bar(x - width/2, acc_top, width, label='Top')
             rects2 = ax.bar(x + width/2, acc_bottom, width, label='Bottom')
