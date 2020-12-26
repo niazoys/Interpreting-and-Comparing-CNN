@@ -39,7 +39,7 @@ def generate_TopThreeIOU(iou,top):
 
 def get_summary(iou,top, num_concept_type):
     '''Takes input the iou, concept type and top value
-    computes a summary: no. of concepts per concept type
+    computes a summary: no. of concepts per concept type per layer
     '''
 
     #shape of tp_iou = #top x #No. of units

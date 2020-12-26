@@ -101,11 +101,71 @@ class visualize_network():
     def reshape_mat(self,mat):
         new_mat  = mat.reshape(self.nrows,-1)
         return new_mat
-    
-    
+
+
+
+    def  vis_concept_dist_per_layer(self):
+        '''
+        plot the concept type summary per layer in the network
+        ''' 
+        names,values = self.get_concept_summary()
+
+        for t in range(self.top):
+            fig_title = "Concept type Distribution: "+self.net_name +" (Top "+str(t+1)+")"
+            plt.suptitle(fig_title)
+
+            plt.plot(names,values[t,0,:],'o--',label="color")
+            plt.plot(names,values[t,1,:],'o--',label="Object")
+            plt.plot(names,values[t,2,:],'o--',label="Part")
+            plt.plot(names,values[t,3,:],'o--',label="Material")
+
+            plt.xticks(rotation=45)
+            # rotate x-axis labels by 45 degrees
+
+            plt.legend()
+            plt.show()
+            # plt.savefig("sample.jpg")
+
+    def get_concept_summary(self):
+        ''' Gives Layer names and a summary of no. of concepts per layer
+        output:
+        values = top * num_concept  *  no. of layers
+        names  = layer names of the networks
+        '''
+        layer_names = os.listdir(self.dir_path)
+        nlayers     = np.size(layer_names)
+
+        values = np.zeros((self.top,self.num_concept_type,nlayers))
+        names  = []
+
+        for l in range(nlayers):
+
+            #Load IOU of the current layer
+            iou   = np.load(os.path.join(self.dir_path,layer_names[l]))
+
+            value = self.get_summary(iou)
+            values[:,:,l] = value
+            names.append('Layer'+str(l))           
+
+        return names,values 
+
+    def get_summary(self,iou):
+        '''
+        computes a summary: no. of concepts per concept type per layer
+        '''
+        #shape of tp_iou = #top x #No. of units
+        tp_iou = self.generate_TopThreeIOU(iou)
+        tp_iou = tp_iou["concept_type"]
+        c= np.zeros([self.top,self.num_concept_type])
+        for t in range(self.top):
+            temp = np.array(tp_iou[t,:])
+            for i in range (self.num_concept_type):
+                c[t,i] = sum(temp==i)
+        return c
+
 if __name__ == "__main__":
     # a = visualize_network('alexnet')
-    # a = visualize_network('resnet18')
-    a = visualize_network('vgg11')
-    a.vis_iou_score_dist_per_layer()
-
+    a = visualize_network('resnet18')
+    # a = visualize_network('vgg11')
+    # a.vis_iou_score_dist_per_layer()
+    a.vis_concept_dist_per_layer()
