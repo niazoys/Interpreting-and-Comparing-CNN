@@ -75,7 +75,7 @@ class NetStat(QWidget):
         self.NetStat_layout.addWidget(self.label2)
         self.NetStat_layout.addWidget(self.chooseInfo)
         self.NetStat_layout.addWidget(self.imageCanvas_stat)
-        self.NetStat_layout.addWidget(self.fig_label)
+        #self.NetStat_layout.addWidget(self.fig_label)
         self.NetStat_layout.addLayout(self.navigation_layout)
         self.NetStat_layout.addWidget(self.back_mainWindow)      
         self.setLayout(self.NetStat_layout)

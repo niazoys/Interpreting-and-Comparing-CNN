@@ -139,16 +139,17 @@ if __name__ == "__main__":
             labels = ['Top-Bottom :'+str(percentile_list[0])+'%','Top-Bottom :'+str(percentile_list[1])+'%','Top-Bottom :'+str(percentile_list[2])+'%']
         
             x = np.arange(len(labels))  # the label locations
-            width = 0.20  # the width of the bars
+            width = 0.10  # the width of the bars
 
             fig, ax = plt.subplots(figsize=(9,9))
             rects = ax.bar(x -0.40, acc_before, width, label='Before Ablation')
             rects1 = ax.bar(x - width/2, acc_top, width, label='Top')
             rects2 = ax.bar(x + width/2, acc_bottom, width, label='Bottom')
-
+            rects3= ax.bar(x[2]+1 ,[0,0,0], width)
+            
             # Add some text for labels, title and custom x-axis tick labels, etc.
             ax.set_ylabel('Scores')
-            ax.set_title('Ablation Performed on: '+str(broden_name)+'_Tested: '+str(imgnet_name)+'.jpg')
+            ax.set_title('Ablation Performed on: '+str(broden_name)+'Class Performance Tested on: '+str(imgnet_name)+'.jpg')
             ax.set_xticks(x)
             ax.set_xticklabels(labels)
             ax.legend()
