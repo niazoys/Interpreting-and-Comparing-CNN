@@ -109,7 +109,7 @@ class visualize_network():
         ''' 
         names,values = self.get_concept_summary()
 
-        
+        fig_name = os.path.join("gui_resources",self.net_name+"_iou_dist")
         for t in range(self.top):
             fig_title = "Concept type Distribution: "+self.net_name +" (Top "+str(t+1)+")"
             plt.subplots(figsize=(9,7))
@@ -125,7 +125,7 @@ class visualize_network():
             plt.suptitle(fig_title)
             plt.legend()
             # plt.show()
-            plt.savefig(self.net_name+str(t+1)+".png")
+            plt.savefig(fig_name+str(t+1)+".png")
 
     def get_concept_summary(self):
         ''' Gives Layer names and a summary of no. of concepts per layer
