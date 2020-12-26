@@ -103,16 +103,17 @@ class visualize_network():
         return new_mat
 
 
-
     def  vis_concept_dist_per_layer(self):
         '''
         plot the concept type summary per layer in the network
         ''' 
         names,values = self.get_concept_summary()
 
+        
         for t in range(self.top):
             fig_title = "Concept type Distribution: "+self.net_name +" (Top "+str(t+1)+")"
-            plt.suptitle(fig_title)
+            plt.subplots(figsize=(9,7))
+
 
             plt.plot(names,values[t,0,:],'o--',label="color")
             plt.plot(names,values[t,1,:],'o--',label="Object")
@@ -121,10 +122,10 @@ class visualize_network():
 
             plt.xticks(rotation=45)
             # rotate x-axis labels by 45 degrees
-
+            plt.suptitle(fig_title)
             plt.legend()
-            plt.show()
-            # plt.savefig("sample.jpg")
+            # plt.show()
+            plt.savefig(self.net_name+str(t+1)+".png")
 
     def get_concept_summary(self):
         ''' Gives Layer names and a summary of no. of concepts per layer
