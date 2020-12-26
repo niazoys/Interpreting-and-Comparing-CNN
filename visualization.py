@@ -1,146 +1,111 @@
-from probe_model import probe_model
-from visualize_layers import VisualizeLayers
 import numpy as np
-from numpy import unravel_index
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import seaborn as sns
+from numpy import unravel_index
+import os
 
-def gen_IG_visualization(IG_table,Layer_names,Class_labels):
+
+class visualize_network():
+    def __init__(self,net_name,top = 3,nrows = 32):
+        self.net_name         = net_name
+        self.dir_path         = os.path.join('IOU',net_name)
+        self.num_concept_type = 6
+        self.nrows            = nrows
+        self.top              = top    
+
+    def vis_iou_score_dist_per_layer(self):
+        '''
+        generates a heatmap using the top IOU scores per layer in the network
+        '''
+        layer_names = os.listdir(self.dir_path)
+        nlayers     = np.size(layer_names)
+
+        # # Parameters of the figure
+        width_ratios_=self.get_width_ratios()
+        fig, ax= plt.subplots(1,nlayers+1, 
+                    gridspec_kw={'width_ratios':width_ratios_})
+
+        for l in range(nlayers):
+
+            #Load IOU of the current layer
+            iou=np.load(os.path.join(self.dir_path,layer_names[l]))
+
+            # value = self.get_top_iou_per_unit(iou)
+
+
+            iou_summary = self.generate_TopThreeIOU(iou)
+            # value       = np.squeeze(iou_summary["unit_iou_pair"][0,:])
+            value       = np.squeeze(iou_summary["concept_type"][0,:])
+            value       = self.reshape_mat(value)
+            
+            if l==nlayers-1:
+                g = sns.heatmap(value,ax=ax[l], cbar_ax=ax[nlayers])
+            else:
+                g = sns.heatmap(value,cbar=False,ax=ax[l])
+            g.set_xlabel('Layer_'+str(l))
+            g.set_xticks([])
+            g.set_yticks([])
+            tl = g.get_xlabel()
+            g.set_xlabel(tl, rotation=45)
+            if l==0:
+                g.set_ylabel('Units')
+
+        fig.suptitle("Concept Distribution")
+        plt.show()
+
+    def get_top_iou_per_unit(self,iou):
+        iou = np.nan_to_num(iou)
+        top_iou = iou.max(axis=1).max(axis=1)
+        top_iou = self.reshape_mat(top_iou)
+        return top_iou
+
+    def generate_TopThreeIOU(self,iou):
+        ''' Computes top three IOU score per unit
+        '''
+        iou = np.nan_to_num(iou)
+        iou_summary = {"concept_idx":np.zeros((self.top,iou.shape[0])),
+        "concept_type":np.zeros((self.top,iou.shape[0])),
+        "unit_iou_pair":np.zeros((self.top,iou.shape[0]))
+                        }
+        for u in range(iou.shape[0]):
+            U_iou = iou[u,:,:]
+
+            for t in range(self.top):
+                idx =unravel_index(U_iou.argmax(), U_iou.shape)
+                iou_summary["concept_idx"][t,u]   = idx[0]
+                iou_summary["concept_type"][t,u]  = idx[1]
+                iou_summary["unit_iou_pair"][t,u] = U_iou[idx]
+                U_iou[idx]=0
+
+        return iou_summary
+
+    def get_width_ratios(self):
+        layer_names = os.listdir(self.dir_path)
+        nlayers     = np.size(layer_names)
+
+        # Parameters of the figure
+        fig_ratio      = np.ones(nlayers)
+        colorbar_ratio = np.array([0.08])
+        
+        for l in range(nlayers):
+            #Load IOU of the current layer
+            iou       = np.load(os.path.join(self.dir_path,layer_names[l]))
+            fig_ratio[l] = iou.shape[0]
+        
+        fig_ratio    = fig_ratio/max(fig_ratio)
+        width_ratios_= np.concatenate((fig_ratio,colorbar_ratio))
+
+        return width_ratios_
+
+    def reshape_mat(self,mat):
+        new_mat  = mat.reshape(self.nrows,-1)
+        return new_mat
     
-    '''
-    It plots the IG score summary 
-    IG_table dimension = #class_label x # Layer_names
-
-    '''
-    fig, ax = plt.subplots(figsize=(5,8))
-    xticklabels=Layer_names
-    yticklabels=Class_labels
-    ax = sns.heatmap(IG_table, xticklabels=xticklabels, yticklabels=yticklabels, linewidth=0.2)
-    plt.xlabel('Layers')
-    plt.ylabel('Class')
-    plt.show()
-
-def generate_TopThreeIOU(iou,top):
-    ''' Computes top three IOU score per unit
-    '''
-    TopThreeIOU = np.zeros([top,iou.shape[0]])
-
-    for u in range(iou.shape[0]):
-        U_iou = iou[u,:,:]
-
-        for t in range(top):
-            idx =unravel_index(U_iou.argmax(), U_iou.shape)
-            TopThreeIOU[t,u]=idx[1]
-            U_iou[idx]=0
-
-    return TopThreeIOU
-
-
-def get_summary(iou,top, num_concept_type):
-    '''Takes input the iou, concept type and top value
-    computes a summary: no. of concepts per concept type
-    '''
-
-    #shape of tp_iou = #top x #No. of units
-    tp_iou = generate_TopThreeIOU(iou,top)
-
-    c= np.zeros([top,num_concept_type])
-    for t in range(top):
-        temp = np.array(tp_iou[t,:])
-        for i in range (num_concept_type):
-            c[t,i] = sum(temp==i)
-    return c
-
-
-def get_concept_summary(top, num_concept_type,Network_name):
-    ''' Gives Layer names and a summary of no. of concepts per layer
-    output:
-    values = top * num_concept  *  no. of layers
-    names  = layer names of the networks
-    '''
-
-    #create object for model probe
-    pm=probe_model(True)
-    vis=VisualizeLayers(pm.get_model())
-    #get the names of the layers in the network 
-    layer_names=vis.get_saved_layer_names()
-
-    values = np.zeros((top,num_concept_type,np.size(layer_names)))
-
-    for l in range(np.size(layer_names)):
-
-        #Load IOU of the current layer
-        iou=np.load('IOU/alexnet/iou_'+str(layer_names[l])+'.npy')
-        #iou=np.load('IOU/iou_Conv2d_Layer0.npy')  
-
-        value = get_summary(iou,top,num_concept_type)
-        values[:,:,l] = value
-
-    return layer_names,values    
-
-def find_top_unit(iou,c_idx,t_percentage):
-    ''' takes input iou of a layer, concept id and the percentage
-    value which will determine the number of units with max iou
-    score to find out '''
-
-    # num of top units to compute
-    num_unit  = np.int(np.round(iou.shape[0]*t_percentage/100))
-    unit_list = np.zeros((num_unit)) 
-    
-    #iou score list of desired concept index
-    temp = iou[:,c_idx-1,:]
-    temp[np.isnan(temp)] = 0
-
-    for u in range(num_unit):
-        idx          = unravel_index(temp.argmax(), temp.shape)
-        unit_list[u] = idx[0]
-        temp[idx]    = 0    #Setting zero to discard from next iteration
-    
-    return unit_list
-
-def find_top_unit_IG(IG,t_percentage):
-    IG=np.load("E:\TRDP_II\ICNN\IG/alexnet/IG_Conv2d_Layer6_class_0101.npy")
-    # num of top units to compute
-    num_unit  = np.int(np.round(IG.shape[0]*t_percentage/100))
-
-    unit_list = np.zeros((num_unit)) 
-
-    for u in range(num_unit):
-        idx          = unravel_index(IG.argmax(), IG.shape)
-        unit_list[u] = idx[0]
-        IG[idx]    = 0    #Setting zero to discard from next iteration
-
-    return unit_list
-
     
 if __name__ == "__main__":
-    top = 3
-    num_concept_type = 4
-    # Get Layer names and a summary of no. of concepts per layer
+    # a = visualize_network('alexnet')
+    # a = visualize_network('resnet18')
+    a = visualize_network('vgg11')
+    a.vis_iou_score_dist_per_layer()
 
-    # values = np.random.randint(10, size=(top,num_concept,5))
-    names,values = get_concept_summary(top,num_concept_type,"resnet18")
-
-
-    for t in range(top):
-        plt.figure(figsize=(15, 3))
-        plt.suptitle("Top "+str(t+1))
-
-        p1,=plt.plot(names,values[t,0,:],'o--',label="color")
-        p2,=plt.plot(names,values[t,1,:],'o--',label="Object")
-        p3,=plt.plot(names,values[t,2,:],'o--',label="Part")
-        p4,=plt.plot(names,values[t,3,:],'o--',label="Material")
-
-        # Place a legend above this subplot, expanding itself to
-        # fully use the given bounding box.
-        plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower right',
-            ncol=1, mode="expand", borderaxespad=0.)
-        plt.show()
-    
-
-
-    a = np.random.randint(1,10,size=(5,8))
-    Layer_names = ['conv1','conv2','conv3','conv4','conv5','conv6','conv7','conv8']
-    Class_labels = ['tina','mona','ayes','ms','pudding']
-    gen_IG_visualization(a,Layer_names,Class_labels)
