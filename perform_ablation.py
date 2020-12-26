@@ -76,7 +76,7 @@ def ablate(model,selected_class,Top,percentile):
         print(layer_names[idx])
        
         # Load IG matrix
-        mat=np.load("IG/vgg/IG_"+layer_names[idx+1]+"_class_0"+str(selected_class)+".npy")
+        mat=np.load("IG/alexnet/IG_"+layer_names[idx+1]+"_class_0"+str(selected_class)+".npy")
 
         # get the neuron index to be turned off 
         if Top:
@@ -110,7 +110,7 @@ if __name__ == "__main__":
 
             data_loader=get_class_dataLoader(str(imgnet_name)+'/',20)
           
-            model = models.vgg11(pretrained=True)
+            model = models.alexnet(pretrained=True)
             model.eval()
             acc_before=[]
             acc_top=[]
@@ -118,7 +118,7 @@ if __name__ == "__main__":
 
             """Top percentile Testing Block"""
             for percentile in percentile_list:
-                model = models.vgg11(pretrained=True)
+                model = models.alexnet(pretrained=True)
                 model.eval()
                 acc_before.append(model_eval(model,data_loader,imgnet_label))
                 ablate(model,broden_label,True,percentile)
@@ -126,7 +126,7 @@ if __name__ == "__main__":
             
             """Bottom percentile Testing Block"""
             for percentile in percentile_list:
-                model = models.vgg11(pretrained=True)
+                model = models.alexnet(pretrained=True)
                 model.eval()
                 ablate(model,broden_label,False,percentile)
                 acc_bottom.append(model_eval(model,data_loader,imgnet_label))
@@ -141,14 +141,14 @@ if __name__ == "__main__":
             x = np.arange(len(labels))  # the label locations
             width = 0.20  # the width of the bars
 
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=(10,10))
             rects = ax.bar(x -0.40, acc_before, width, label='Before Ablation')
             rects1 = ax.bar(x - width/2, acc_top, width, label='Top')
             rects2 = ax.bar(x + width/2, acc_bottom, width, label='Bottom')
 
             # Add some text for labels, title and custom x-axis tick labels, etc.
             ax.set_ylabel('Scores')
-            ax.set_title('ablation: '+str(broden_name)+'_Tested: '+str(imgnet_name)+'.jpg')
+            ax.set_title('Ablation Performed on: '+str(broden_name)+'_Tested: '+str(imgnet_name)+'.jpg')
             ax.set_xticks(x)
             ax.set_xticklabels(labels)
             ax.legend()
@@ -159,8 +159,8 @@ if __name__ == "__main__":
             autolabel(ax,rects2)
             fig.tight_layout()
            
-            #plt.show() 
-            plt.savefig('output_imgs/vgg/ablation'+str(broden_name)+'_Tested'+str(imgnet_name)+'.jpg')
+            plt.show() 
+            #plt.savefig('output_imgs/vgg/ablation'+str(broden_name)+'_Tested'+str(imgnet_name)+'.jpg')
 
         # # open file for writng the 
         # f = open(str(model.__class__.__name__)+"ablation_test.txt", 'w')
