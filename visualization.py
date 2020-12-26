@@ -3,102 +3,109 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import seaborn as sns
 from numpy import unravel_index
+import os
+
 
 class visualize_network():
-    def __init__(self,net_name,nrows = 25):
+    def __init__(self,net_name,top = 3,nrows = 32):
         self.net_name         = net_name
+        self.dir_path         = os.path.join('IOU',net_name)
         self.num_concept_type = 6
         self.nrows            = nrows
-
-
-    def get_layer_list(self):
-        '''
-        returns the layer list of the network
-        '''
-        if self.net_name == 'alexnet':
-            layer_list = ['Layer0','Layer3','Layer6','Layer8','Layer10']
-        elif self.net_name == 'resnet18':
-            layer_list = ['Layer0','Layer3','Layer6','Layer8','Layer10']
-        else:
-            layer_list = ['Layer0','Layer3','Layer6','Layer8','Layer10']
-        
-        return layer_list, np.size(layer_list)
-    
+        self.top              = top    
 
     def vis_iou_score_dist_per_layer(self):
         '''
         generates a heatmap using the top IOU scores per layer in the network
         '''
-        #get the names of the layers in the network 
-        layer_names, nlayers = self.get_layer_list()
+        layer_names = os.listdir(self.dir_path)
+        nlayers     = np.size(layer_names)
 
-        # Parameters of the figure
-        fig_ratio      = np.ones(nlayers)
-        colorbar_ratio = np.array([0.08])
-        width_ratios_=np.concatenate((fig_ratio,colorbar_ratio))
+        # # Parameters of the figure
+        width_ratios_=self.get_width_ratios()
         fig, ax= plt.subplots(1,nlayers+1, 
                     gridspec_kw={'width_ratios':width_ratios_})
 
         for l in range(nlayers):
 
             #Load IOU of the current layer
-            iou=np.load('IOU/alexnet/iou_Conv2d_'+str(layer_names[l])+'.npy')
+            iou=np.load(os.path.join(self.dir_path,layer_names[l]))
 
-            value = self.get_top_iou_per_unit(iou)
+            # value = self.get_top_iou_per_unit(iou)
+
+
+            iou_summary = self.generate_TopThreeIOU(iou)
+            # value       = np.squeeze(iou_summary["unit_iou_pair"][0,:])
+            value       = np.squeeze(iou_summary["concept_type"][0,:])
+            value       = self.reshape_mat(value)
             
-            g = sns.heatmap(value,cmap="YlGnBu",cbar=False,ax=ax[l])
-            g.set_xlabel(str(l))
+            if l==nlayers-1:
+                g = sns.heatmap(value,ax=ax[l], cbar_ax=ax[nlayers])
+            else:
+                g = sns.heatmap(value,cbar=False,ax=ax[l])
+            g.set_xlabel('Layer_'+str(l))
             g.set_xticks([])
             g.set_yticks([])
+            tl = g.get_xlabel()
+            g.set_xlabel(tl, rotation=45)
             if l==0:
                 g.set_ylabel('Units')
 
-        g_caxis = sns.heatmap(value,cmap="YlGnBu",ax=ax[nlayers-1], cbar_ax=ax[nlayers])
-        g_caxis.set_ylabel('')
-        g_caxis.set_xlabel('')
-        g_caxis.set_yticks([])
+        fig.suptitle("Concept Distribution")
         plt.show()
 
-
     def get_top_iou_per_unit(self,iou):
-
+        iou = np.nan_to_num(iou)
         top_iou = iou.max(axis=1).max(axis=1)
         top_iou = self.reshape_mat(top_iou)
         return top_iou
 
-    def generate_TopThreeIOU(self,iou,top):
+    def generate_TopThreeIOU(self,iou):
         ''' Computes top three IOU score per unit
         '''
-        iou_summary = {"concept_idx":np.zeros((top,iou.shape[0])),
-        "concept_type":np.zeros((top,iou.shape[0]))
+        iou = np.nan_to_num(iou)
+        iou_summary = {"concept_idx":np.zeros((self.top,iou.shape[0])),
+        "concept_type":np.zeros((self.top,iou.shape[0])),
+        "unit_iou_pair":np.zeros((self.top,iou.shape[0]))
                         }
         for u in range(iou.shape[0]):
             U_iou = iou[u,:,:]
 
-            for t in range(top):
+            for t in range(self.top):
                 idx =unravel_index(U_iou.argmax(), U_iou.shape)
-                iou_summary["concept_idx"][t,u]=idx[0]
-                iou_summary["concept_type"][t,u]=idx[1]
+                iou_summary["concept_idx"][t,u]   = idx[0]
+                iou_summary["concept_type"][t,u]  = idx[1]
+                iou_summary["unit_iou_pair"][t,u] = U_iou[idx]
                 U_iou[idx]=0
 
         return iou_summary
 
-        def reshape_mat(self,mat):
-            n_unit   = mat.shape[0]
-            padding  = self.nrows-n_unit%self.nrows
-            temp_mat = np.concatenate((mat,-1*np.ones(padding)))
-            new_mat  = temp_mat.reshape(self.nrows,-1)
-            return new_mat
+    def get_width_ratios(self):
+        layer_names = os.listdir(self.dir_path)
+        nlayers     = np.size(layer_names)
 
+        # Parameters of the figure
+        fig_ratio      = np.ones(nlayers)
+        colorbar_ratio = np.array([0.08])
+        
+        for l in range(nlayers):
+            #Load IOU of the current layer
+            iou       = np.load(os.path.join(self.dir_path,layer_names[l]))
+            fig_ratio[l] = iou.shape[0]
+        
+        fig_ratio    = fig_ratio/max(fig_ratio)
+        width_ratios_= np.concatenate((fig_ratio,colorbar_ratio))
+
+        return width_ratios_
 
     def reshape_mat(self,mat):
-        n_unit   = mat.shape[0]
-        padding  = self.nrows-n_unit%self.nrows
-        temp_mat = np.concatenate((mat,-1*np.ones(padding)))
-        new_mat  = temp_mat.reshape(self.nrows,-1)
+        new_mat  = mat.reshape(self.nrows,-1)
         return new_mat
-
+    
 
 if __name__ == "__main__":
-    a = visualize_network('alexnet')
+    # a = visualize_network('alexnet')
+    # a = visualize_network('resnet18')
+    a = visualize_network('vgg11')
     a.vis_iou_score_dist_per_layer()
+
