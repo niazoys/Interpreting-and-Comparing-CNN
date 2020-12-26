@@ -65,6 +65,22 @@ class visualize_network():
         top_iou = self.reshape_mat(top_iou)
         return top_iou
 
+def generate_TopThreeIOU(iou,top):
+    ''' Computes top three IOU score per unit
+    '''
+    iou_summary = {"concept_idx":np.zeros((top,iou.shape[0])),
+    "concept_type":np.zeros((top,iou.shape[0]))
+                    }
+    for u in range(iou.shape[0]):
+        U_iou = iou[u,:,:]
+
+        for t in range(top):
+            idx =unravel_index(U_iou.argmax(), U_iou.shape)
+            iou_summary["concept_idx"][t,u]=idx[0]
+            iou_summary["concept_type"][t,u]=idx[1]
+            U_iou[idx]=0
+
+    return iou_summary
 
     def reshape_mat(self,mat):
         n_unit   = mat.shape[0]
