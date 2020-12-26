@@ -33,9 +33,9 @@ class NetStat(QWidget):
         self.label1=QLabel("Select Netwrok")
         self.chooseNetwork = QComboBox()
         self.chooseNetwork.addItem('')
-        self.chooseNetwork.addItem('Alexnet')
-        self.chooseNetwork.addItem('VGG')
-        self.chooseNetwork.addItem('ResNet')
+        self.chooseNetwork.addItem('alexnet')
+        self.chooseNetwork.addItem('vgg11')
+        self.chooseNetwork.addItem('resnet18')
         self.chooseNetwork.activated[str].connect(self.changeViznetowrk)
         
         
@@ -82,7 +82,7 @@ class NetStat(QWidget):
         self.show()
     
     def showImage(self,pixmap): 
-        pixmap = pixmap.scaled(500, 50)
+        pixmap = pixmap.scaled(500, 500)
         self.imageCanvas_stat.setMaximumHeight(pixmap.height())
         self.imageCanvas_stat.setMaximumWidth(pixmap.width())
         self.imageCanvas_stat.setPixmap(pixmap)
@@ -130,13 +130,13 @@ class NetStat(QWidget):
 
     def changeViznetowrk(self,netowrk):
         ''' Selects between the different Network'''
-        if netowrk =='Alexnet':
+        if netowrk =='alexnet':
             self.chooseInfo.setEnabled(True)    
             self.networkName=netowrk
-        elif netowrk=='VGG':
+        elif netowrk=='vgg11':
             self.chooseInfo.setEnabled(True)
             self.networkName=netowrk
-        elif netowrk =='ResNet':
+        elif netowrk =='resnet18':
             self.chooseInfo.setEnabled(True)
             self.networkName=netowrk
         else:
