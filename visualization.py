@@ -102,7 +102,7 @@ class visualize_network():
         new_mat  = mat.reshape(self.nrows,-1)
         return new_mat
     
-
+    
 if __name__ == "__main__":
     # a = visualize_network('alexnet')
     # a = visualize_network('resnet18')
