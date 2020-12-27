@@ -143,7 +143,6 @@ class NetStat(QWidget):
             print ("Wrong Netowrk Selected")
 
 
-
 class NetAttribute(QWidget):
     def __init__ (self):
         super(NetAttribute, self).__init__()
@@ -256,7 +255,7 @@ class NetAttribute(QWidget):
             fig.savefig('gui_resources/temp/'+str(i)+'.jpg')
 
         input_img=np.transpose(self.x.squeeze(0).cpu().detach().numpy(), (1, 2, 0))
-        fig1,_ = vizu.visualize_image_attr(self.attribution,input_img,sign="absolute_value", method="blended_heat_map",
+        fig1,_ = vizu.visualize_image_attr(self.attribution,input_img,sign="absolute_value", method="blended_heat_map",use_pyplot=False,
                                 show_colorbar=False, title="Integrated Gradient Overlayed on Input")
         fig1.savefig('gui_resources/temp/overlay.jpg')
 
@@ -305,7 +304,6 @@ class NetAttribute(QWidget):
         self.mainwindow = MainWindow()
         self.hide()
         self.mainwindow.show()
-
 
 
 class MainWindow(QWidget):
