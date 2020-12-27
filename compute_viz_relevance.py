@@ -100,7 +100,7 @@ if  __name__ == "__main__":
 
     # Dog=93 ,cat=105.mosque=1062,hen=830
 
-    class_list =[123,50,88,191,121,135]
+    class_list =[123,50,191,121,135]
 
     for idx in range(1,len(layer_names)):
         layer=vis.conv_layers[layer_names[idx]]

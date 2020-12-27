@@ -10,6 +10,7 @@ class visualize_network():
     def __init__(self,net_name,top = 3,nrows = 32):
         self.net_name         = net_name
         self.dir_path         = os.path.join('IOU',net_name)
+        self.ig_path         = os.path.join('IG',net_name)
         self.num_concept_type = 6
         self.nrows            = nrows
         self.top              = top    
@@ -125,7 +126,7 @@ class visualize_network():
             plt.suptitle(fig_title)
             plt.legend()
             # plt.show()
-            plt.savefig(fig_name+str(t+1)+".png")
+            plt.savefig(fig_name+"/Top_"+str(t+1)+".png")
 
     def get_concept_summary(self):
         ''' Gives Layer names and a summary of no. of concepts per layer
@@ -164,9 +165,55 @@ class visualize_network():
                 c[t,i] = sum(temp==i)
         return c
 
+
+    def vis_classwise_IG_dist(self):
+        '''
+        genarates a classwise IG map per layer
+        '''
+        class_list  = [123,50,191,121,135]
+        layer_names = os.listdir(self.dir_path)
+        nlayers     = np.size(layer_names)
+
+        # Parameters of the figure
+        fig_ratio      = np.ones(nlayers-1)
+        colorbar_ratio = np.array([0.08])
+        width_ratios_=np.concatenate((fig_ratio,colorbar_ratio))
+        fig, ax= plt.subplots(1,nlayers, 
+                    gridspec_kw={'width_ratios':width_ratios_})
+
+
+        # values = np.zeros((nlayers,len(class_list)))
+        for l in range(1,nlayers):
+            layer = layer_names[l]
+            layer = layer[4:-4]
+            values = np.zeros((len(class_list),1))
+            for c in range(len(class_list)):
+                ig = np.load(self.ig_path+'/IG_'+layer+'_class_0'+str(class_list[c])+'.npy')
+                values[c,0] = sum(ig) 
+
+            if l==nlayers-1:
+                g = sns.heatmap(values,ax=ax[l-1], cbar_ax=ax[l])
+            else:
+                g = sns.heatmap(values,cbar=False,ax=ax[l-1])
+            g.set_xlabel('Layer_'+str(l))
+            g.set_xticks([])
+            g.set_yticks([])
+            tl = g.get_xlabel()
+            g.set_xlabel(tl, rotation=45)
+            if l==1:
+                g.set_ylabel(class_list)
+
+
+        fig.suptitle("Classwise IG Distribution")
+        plt.show()        
+        return values
+
 if __name__ == "__main__":
     # a = visualize_network('alexnet')
-    a = visualize_network('resnet18')
-    # a = visualize_network('vgg11')
+    # a = visualize_network('resnet18')
+    a = visualize_network('vgg11')
+
     # a.vis_iou_score_dist_per_layer()
-    a.vis_concept_dist_per_layer()
+    # a.vis_concept_dist_per_layer()
+
+    print(a.vis_classwise_IG_dist().shape)
