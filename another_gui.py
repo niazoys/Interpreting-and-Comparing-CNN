@@ -21,7 +21,7 @@ class NetStat(QWidget):
         self.setWindowTitle("Network Statistics")
         self.y=50
         self.x=300
-        self.width = 500
+        self.width = 700
         self.height = 500
         self.setGeometry(self.x,self.y,self.width,self.height)
         self.NetStat_window()
@@ -82,7 +82,7 @@ class NetStat(QWidget):
         self.show()
     
     def showImage(self,pixmap): 
-        pixmap = pixmap.scaled(500, 500)
+        pixmap = pixmap.scaled(700, 700)
         self.imageCanvas_stat.setMaximumHeight(pixmap.height())
         self.imageCanvas_stat.setMaximumWidth(pixmap.width())
         self.imageCanvas_stat.setPixmap(pixmap)
@@ -148,10 +148,10 @@ class NetAttribute(QWidget):
         super(NetAttribute, self).__init__()
 
         self.setWindowTitle("Network Attribution (Integrated Gradient)")
-        self.y=20
+        self.y=40
         self.x=300
-        self.width = 900
-        self.height = 800
+        self.width =1100
+        self.height = 790
         self.setGeometry(self.x,self.y,self.width,self.height)
         self.NetAttribute_window()
 
@@ -294,7 +294,7 @@ class NetAttribute(QWidget):
             print ("Wrong Netowrk Selected")
     
     def plotQlabelImage(self,pixmap,imageCanvas):
-        pixmap = pixmap.scaled(370, 370)
+        pixmap = pixmap.scaled(400, 360)
         imageCanvas.setMaximumHeight(pixmap.height())
         imageCanvas.setMaximumWidth(pixmap.width())
         imageCanvas.setPixmap(pixmap)

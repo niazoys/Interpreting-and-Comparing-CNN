@@ -100,7 +100,7 @@ if  __name__ == "__main__":
 
     # Dog=93 ,cat=105.mosque=1062,hen=830
 
-    class_list =[123]
+    # class_list =[123,50,191,121,135]
 
     for idx in range(0,len(layer_names)):
         layer=vis.conv_layers[layer_names[idx]]
@@ -148,9 +148,7 @@ if  __name__ == "__main__":
             # save IG score    
             np.save('IG/alexnet/IG_'+str(layer_names[idx])+'_class_0'+str(selected_class)+'.npy',avg_relevance_score)
 
-            # plt.hist(avg_relevance_score, bins=8, histtype='barstacked')
-            # plt.title("IG Score distribution for "+str(layer_names[idx]))
-            # plt.show()
+          
 
             
         
