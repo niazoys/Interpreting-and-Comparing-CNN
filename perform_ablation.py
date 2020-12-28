@@ -143,8 +143,8 @@ if __name__ == "__main__":
 
             fig, ax = plt.subplots(figsize=(9,7))
             rects = ax.bar(x -0.40, acc_before, width, label='Before Ablation')
-            rects1 = ax.bar(x - width/2, acc_top, width, label='Top')
-            rects2 = ax.bar(x + width/2, acc_bottom, width, label='Bottom')
+            rects1 = ax.bar(x - width/2, acc_bottom , width, label='Top')
+            rects2 = ax.bar(x + width/2,acc_top , width, label='Bottom')
             rects3= ax.bar(x[2]+0.7 ,[0,0,0], width,label='')
             
             # Add some text for labels, title and custom x-axis tick labels, etc.
@@ -161,7 +161,7 @@ if __name__ == "__main__":
             fig.tight_layout()
            
             #plt.show() 
-            plt.savefig('output_imgs/resnet18/ablation'+str(broden_name)+'_Tested(34)'+str(imgnet_name)+'.jpg')
+            plt.savefig('output_imgs/resnet18/ablation'+str(broden_name)+'_Tested(34)_inverted'+str(imgnet_name)+'.jpg')
 
         # # open file for writng the 
         # f = open(str(model.__class__.__name__)+"ablation_test.txt", 'w')
