@@ -70,8 +70,8 @@ class visualize_network():
         iou = np.nan_to_num(iou)
         iou_summary = {"concept_idx":np.zeros((self.top,iou.shape[0])),
         "concept_type":np.zeros((self.top,iou.shape[0])),
-        "unit_iou_pair":np.zeros((self.top,iou.shape[0]))
-                        }
+        "unit_iou_pair":np.zeros((self.top,iou.shape[0]))}
+        
         for u in range(iou.shape[0]):
             U_iou = iou[u,:,:]
 
