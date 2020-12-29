@@ -39,9 +39,11 @@ class visualize_network():
             # value       = np.squeeze(iou_summary["unit_iou_pair"][0,:])
             value       = np.squeeze(iou_summary["concept_type"][0,:])
             value       = self.reshape_mat(value)
-            
+            bounds      = [1,2,3,4,5]
+            print(np.unique(value))
             if l==nlayers-1:
-                g = sns.heatmap(value,ax=ax[l], cbar_ax=ax[nlayers])
+                # g = sns.heatmap(value,ax=ax[l], cbar_ax=ax[nlayers])
+                g = sns.heatmap(value,ax=ax[l], cbar_ax=ax[nlayers], cbar_kws= {"boundaries": bounds,"ticks":[]})
             else:
                 g = sns.heatmap(value,cbar=False,ax=ax[l])
             g.set_xlabel('Layer_'+str(l))
@@ -52,8 +54,9 @@ class visualize_network():
             if l==0:
                 g.set_ylabel('Units')
 
-        fig.suptitle("Concept Distribution")
+        fig.suptitle("QI score map of "+str(self.net_name))
         plt.show()
+        # plt.savefig('gui_resources/'+self.net_name+'_iou_layerwise_dist/'+self.net_name+'.png')
 
     def get_top_iou_per_unit(self,iou):
         iou = np.nan_to_num(iou)
@@ -75,7 +78,7 @@ class visualize_network():
             for t in range(self.top):
                 idx =unravel_index(U_iou.argmax(), U_iou.shape)
                 iou_summary["concept_idx"][t,u]   = idx[0]
-                iou_summary["concept_type"][t,u]  = idx[1]
+                iou_summary["concept_type"][t,u]  = idx[1]+1
                 iou_summary["unit_iou_pair"][t,u] = U_iou[idx]
                 U_iou[idx]=0
 
@@ -125,8 +128,8 @@ class visualize_network():
             # rotate x-axis labels by 45 degrees
             plt.suptitle(fig_title)
             plt.legend()
-            # plt.show()
-            plt.savefig(fig_name+"/Top_"+str(t+1)+".png")
+            plt.show()
+            # plt.savefig(fig_name+"/Top_"+str(t+1)+".png")
 
     def get_concept_summary(self):
         ''' Gives Layer names and a summary of no. of concepts per layer
@@ -171,6 +174,7 @@ class visualize_network():
         genarates a classwise IG map per layer
         '''
         class_list  = [123,50,191,121,135]
+        # class_list  = [50]
         layer_names = os.listdir(self.dir_path)
         nlayers     = np.size(layer_names)
 
@@ -189,8 +193,12 @@ class visualize_network():
             values = np.zeros((len(class_list),1))
             for c in range(len(class_list)):
                 ig = np.load(self.ig_path+'/IG_'+layer+'_class_0'+str(class_list[c])+'.npy')
-                values[c,0] = sum(ig) 
-
+                # values[c,0] = sum(ig) /len(ig)
+                mat = ig
+                percentile = 25
+                threshold=np.quantile(mat,1-percentile/100)
+                itemindex = np.where(mat>threshold)
+                values[c,0] = sum(mat[itemindex])
             if l==nlayers-1:
                 g = sns.heatmap(values,ax=ax[l-1], cbar_ax=ax[l])
             else:
@@ -209,11 +217,11 @@ class visualize_network():
         return values
 
 if __name__ == "__main__":
-    # a = visualize_network('alexnet')
+    a = visualize_network('alexnet')
     # a = visualize_network('resnet18')
-    a = visualize_network('vgg11')
+    # a = visualize_network('vgg11')
 
-    # a.vis_iou_score_dist_per_layer()
+    a.vis_iou_score_dist_per_layer()
     # a.vis_concept_dist_per_layer()
 
-    print(a.vis_classwise_IG_dist().shape)
+    # print(a.vis_classwise_IG_dist().shape)
