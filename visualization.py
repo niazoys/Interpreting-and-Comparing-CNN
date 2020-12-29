@@ -40,7 +40,7 @@ class visualize_network():
             value       = np.squeeze(iou_summary["concept_type"][0,:])
             value       = self.reshape_mat(value)
             bounds      = [1,2,3,4,5]
-            print(np.unique(value))
+
             if l==nlayers-1:
                 # g = sns.heatmap(value,ax=ax[l], cbar_ax=ax[nlayers])
                 g = sns.heatmap(value,ax=ax[l], cbar_ax=ax[nlayers], cbar_kws= {"boundaries": bounds,"ticks":[]})
