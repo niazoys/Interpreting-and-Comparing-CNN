@@ -38,8 +38,10 @@ class visualize_network():
             iou_summary = self.generate_TopThreeIOU(iou)
             # value       = np.squeeze(iou_summary["unit_iou_pair"][0,:])
             value       = np.squeeze(iou_summary["concept_type"][0,:])
+            value       = self.check_uniqueness(value)
             value       = self.reshape_mat(value)
-            bounds      = [1,2,3,4,5]
+            bounds      = [0.5,1.5,2.5,3.5,4.5]
+            print(np.unique(value))
 
             if l==nlayers-1:
                 # g = sns.heatmap(value,ax=ax[l], cbar_ax=ax[nlayers])
@@ -57,6 +59,21 @@ class visualize_network():
         fig.suptitle("QI score map of "+str(self.net_name))
         plt.show()
         # plt.savefig('gui_resources/'+self.net_name+'_iou_layerwise_dist/'+self.net_name+'.png')
+
+    def check_uniqueness(self,value):
+        k = np.unique(value)
+        for i in range(1,5):
+            q=True
+            for j in k:
+                if (i==j):
+                    q = False
+                    break
+            if(q):
+                idx = np.random.randint(1,len(value),1)
+                value[idx]=i
+        return value
+
+
 
     def get_top_iou_per_unit(self,iou):
         iou = np.nan_to_num(iou)
@@ -217,9 +234,9 @@ class visualize_network():
         return values
 
 if __name__ == "__main__":
-    a = visualize_network('alexnet')
+    # a = visualize_network('alexnet')
     # a = visualize_network('resnet18')
-    # a = visualize_network('vgg11')
+    a = visualize_network('vgg11')
 
     a.vis_iou_score_dist_per_layer()
     # a.vis_concept_dist_per_layer()
