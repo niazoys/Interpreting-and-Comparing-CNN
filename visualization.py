@@ -74,7 +74,6 @@ class visualize_network():
         return value
 
 
-
     def get_top_iou_per_unit(self,iou):
         iou = np.nan_to_num(iou)
         top_iou = iou.max(axis=1).max(axis=1)
