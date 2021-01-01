@@ -34,7 +34,7 @@ class Utility ():
         resized_ig=np.zeros((images_batch.shape[0],images_batch.shape[1],img_shape[0],img_shape[1]))
         for im_num in range (images_batch.shape[0]):
             for unit_num in range(images_batch.shape[1]):
-                resized_ig[im_num,unit_num,:,:] = cv2.resize( images_batch[im_num,unit_num,:,:] , dsize=(113, 113), interpolation=cv2.INTER_CUBIC)
+                resized_ig[im_num,unit_num,:,:] = cv2.resize( images_batch[im_num,unit_num,:,:] , dsize=tuple(img_shape), interpolation=cv2.INTER_CUBIC)
         return resized_ig
 
     @staticmethod
@@ -99,6 +99,9 @@ class Utility ():
     @staticmethod
     def normalize_image(img):
         '''image normalizer method '''
-        img = img - img.min()
-        img = img / img.max()
+        for i in range (img.shape[2]):
+            im=img[:,:,i]
+            im = im - im.min()
+            im = im / im.max()
+            img[:,:,i]=im
         return img

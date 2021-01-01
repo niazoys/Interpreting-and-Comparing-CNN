@@ -13,10 +13,7 @@ import torchvision
 from torchvision import models
 from dataloader import classLoader
 
-
-
-
- 
+from PIL import Image
 
 
 def revelence_score_pipeline (x,mask,model,layer,attribute_to_layer_input):
@@ -46,10 +43,10 @@ def revelence_score_pipeline (x,mask,model,layer,attribute_to_layer_input):
 
     # get the activation for selected layer 
     attribution=layer_ig.attribute(x,target=preds,attribute_to_layer_input=attribute_to_layer_input)
-    attribution=attribution.cpu().detach().squeeze(0).numpy()
+    attribution_=attribution.cpu().detach().squeeze(0).numpy()
     
     #Resize the attribution 
-    attribution=Utility.resize_IG_batch(attribution)
+    attribution=Utility.resize_IG_batch(attribution_)
     
     #Apply the mask on the IG map 
     masked_attribution= np.copy(attribution)
@@ -64,10 +61,40 @@ def revelence_score_pipeline (x,mask,model,layer,attribute_to_layer_input):
     # plt.show()
     # plt.imshow(np.transpose(x[1,:,:,:].cpu().numpy(),(1,2,0)))
     # plt.show()
-    # plt.imshow(attribution[1,50,:,:],cmap='gray')
+    # agg=np.sum(attribution[1,:,:,:],axis=0)
+
+    # plt.imshow(agg,cmap="inferno")
     # plt.show()
-    # plt.imshow(masked_attribution[1,50,:,:],cmap='gray')
-    # plt.show()
+    att=Utility.resize_IG_batch(attribution_,[227,227])
+    mat=np.load('top_bottom_index/resnet18/bottom_class_0105.npy',allow_pickle=True)
+    mat=mat[2][0]
+    t_att=att[1,mat,:,:]
+    t_att=np.sum(t_att,axis=0)
+
+    # th=np.quantile(t_att,0.99999)
+    # t_att=t_att>th
+    
+    fig, axs = plt.subplots(nrows=1, ncols=2, squeeze=False, figsize=   (8, 8))
+    axs[0, 0].set_title('Attribution mask')
+    axs[0, 0].imshow(att[1,5,:,:], cmap=plt.cm.inferno)
+    axs[0, 0].axis('off')
+    axs[0, 1].set_title('Overlay IG on Input image ')
+    
+    #t_att=t_att-t_att.min()/t_att.max()
+    axs[0, 1].imshow(t_att)
+    tmp=np.transpose(x[1,:,:,:].cpu().numpy(),(1,2,0))
+    #tmp=Utility.normalize_image(tmp)
+    axs[0, 1].imshow(tmp, alpha=0.4)
+    axs[0, 1].axis('off')
+    plt.tight_layout()
+    plt.show()
+    
+    # img = Image.fromarray(np.uint8(att[1,1,:,:] * 255) , 'L')
+    # img.show()
+
+    # tmp=np.transpose(x[1,:,:,:].cpu().numpy(),(1,2,0))
+    # _ = vizu.visualize_image_attr((att[1,1,:,:]),tmp[:,:,1],sign="absolute_value", method="blended_heat_map",use_pyplot=False,
+    #                             show_colorbar=False, title="Integrated Gradient Overlayed on Input")
     
     
     return attribution,masked_attribution,relevance_score
@@ -86,27 +113,26 @@ if  __name__ == "__main__":
     #Get the model
     '''
     Remember to switch  the full(float32) computation mode by setting the 
-    2nd argument to False for non Residual networks.(e.g. ALexnet ,VGG) 
+    2nd argument to False for non Residual networks.(e.g. resnet18 ,VGG) 
     '''
-    model = models.alexnet(pretrained=True)
+    model = models.resnet18(pretrained=True)
     model.to(device)
     #Get the layers 
     '''
-    Remember to change the 2nd argument to False for non Residual networks.(e.g. ALexnet ,VGG) 
+    Remember to change the 2nd argument to False for non Residual networks.(e.g. resnet18 ,VGG) 
     '''
     vis=VisualizeLayers(model)
     layer_names=vis.get_saved_layer_names()
     
 
-    # Dog=93 ,cat=105.mosque=1062,hen=830
+    class_list =[105]
 
-    # class_list =[123,50,191,121,135]
-
-    for idx in range(0,len(layer_names)):
+    for idx in range(3,len(layer_names)):
         layer=vis.conv_layers[layer_names[idx]]
+        print(layer_names[idx])
         for selected_class in class_list:
             list_batch_relevance_score=[]
-            batch_size=8
+            batch_size=2
             clLoader.data_counter=0
             sample_count   = clLoader.get_length(selected_class)
             iterations     =int( np.floor(sample_count/batch_size) )
@@ -124,29 +150,16 @@ if  __name__ == "__main__":
                     #Get relevance score 
                     _,_,batch_relevance_score=revelence_score_pipeline(x,mask,model,layer,True)
 
-                #visualize the masked maps 
-                # _ = vizu.visualize_image_attr(np.expand_dims(masked_attribution[:,10,:,:],axis=2),sign="absolute_value",
-                #                 show_colorbar=True, title="IG")
-                
-                # #show many images 
-                # im_sample=1
-                # Utility.show_many_images((masked_attribution[im_sample,:,:,:]),36,False)
-                
-                # for i in range(5):
-                #     plt.imshow ((masked_attribution[im_sample,i,:,:]))
-                #     plt.colorbar()
-                #     plt.show()
-
                 list_batch_relevance_score.append (batch_relevance_score)
                 print("Processed Class: "+str(selected_class)+ " Batch:",i)
 
-            
+            #stack the samples gathered 
             relevance_score=np.vstack(list_batch_relevance_score)
-
+            #Compute 
             avg_relevance_score=np.average(relevance_score,axis=0)
             
             # save IG score    
-            np.save('IG/alexnet/IG_'+str(layer_names[idx])+'_class_0'+str(selected_class)+'.npy',avg_relevance_score)
+            np.save('IG/resnet18/IG_'+str(layer_names[idx])+'_class_0'+str(selected_class)+'.npy',avg_relevance_score)
 
           
 
