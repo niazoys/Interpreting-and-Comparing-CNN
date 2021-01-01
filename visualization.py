@@ -202,24 +202,32 @@ class visualize_network():
         fig, ax= plt.subplots(1,nlayers, 
                     gridspec_kw={'width_ratios':width_ratios_})
 
-
-        # values = np.zeros((nlayers,len(class_list)))
+        #---------------------------------------------------------------------------------------
+        values_range = np.zeros((len(class_list),nlayers-1))
         for l in range(1,nlayers):
             layer = layer_names[l]
             layer = layer[4:-4]
-            values = np.zeros((len(class_list),1))
             for c in range(len(class_list)):
                 ig = np.load(self.ig_path+'/IG_'+layer+'_class_0'+str(class_list[c])+'.npy')
-                # values[c,0] = sum(ig) /len(ig)
                 mat = ig
                 percentile = 25
                 threshold=np.quantile(mat,1-percentile/100)
                 itemindex = np.where(mat>threshold)
-                values[c,0] = sum(mat[itemindex])
+                values_range[c,l-1] = sum(mat[itemindex])
+
+        # temp = np.zeros_like(values_range)
+        # for i in range(temp.shape[0]):
+        #     temp[i,:] = values_range[i,:]/max(values_range[i,:])
+        # values_range = temp
+        #-------------------------------------------------------------------------------------------------------------------------------
+        for l in range(1,nlayers):
+            a=values_range[:,l-1]
+            a = a[:, np.newaxis]
+
             if l==nlayers-1:
-                g = sns.heatmap(values,ax=ax[l-1], cbar_ax=ax[l])
+                g = sns.heatmap(a,vmax=values_range.max(),vmin=values_range.min(),annot=True ,ax=ax[l-1], cbar_ax=ax[l])
             else:
-                g = sns.heatmap(values,cbar=False,ax=ax[l-1])
+                g = sns.heatmap(a,vmax=values_range.max(),vmin=values_range.min(),annot=True,cbar=False,ax=ax[l-1])
             g.set_xlabel('Layer_'+str(l))
             g.set_xticks([])
             g.set_yticks([])
@@ -231,14 +239,14 @@ class visualize_network():
 
         fig.suptitle("Classwise IG Distribution")
         plt.show()        
-        return values
+        return values_range
 
 if __name__ == "__main__":
     # a = visualize_network('alexnet')
     a = visualize_network('resnet18')
     # a = visualize_network('vgg11')
 
-    a.vis_iou_score_dist_per_layer()
+    # a.vis_iou_score_dist_per_layer()
     # a.vis_concept_dist_per_layer()
 
-    # print(a.vis_classwise_IG_dist().shape)
+    print(a.vis_classwise_IG_dist().shape)
