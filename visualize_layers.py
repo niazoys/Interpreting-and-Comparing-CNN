@@ -37,8 +37,6 @@ class VisualizeLayers(object):
                 self.conv_layers[layer._get_name()+"_Layer"+str(name)]=layer
                 layer_counter=layer_counter+1
     
-    
-
     def generate_layers_info(self,model):
        
         '''
@@ -68,7 +66,6 @@ class VisualizeLayers(object):
                             self.conv_layers[namepart]=(child)
                             counter=+1
     
-
     def remove_all_hooks(self):
             self.hook_handle.remove()
 
@@ -98,8 +95,6 @@ class VisualizeLayers(object):
         self.interm_output.clear()
         return list_
 
-
-    
     def get_interm_output(self):
         '''
         function to get the intermediate layers(layers which were hooked) output
@@ -122,7 +117,6 @@ class VisualizeLayers(object):
             names.append(name)
         return names
     
-
     def plot_single_featuremaps(self,featuremaps,unit_num,name,color_map='color',savefig=False,figsize=12):
         """
             shows featuremap for single neuron 
@@ -172,45 +166,3 @@ class VisualizeLayers(object):
             plt.savefig("output_imgs/{}".format(name) + '.jpg')
         
         plt.show()
-
-#%%        
-if __name__=='__main__':  
-      from torchvision import models
-#     # load the Pytorch model
-      model = models.vgg16(pretrained=True)
-      
-    #   model_children=list(model.children())
-    #   for i in range(len(model_children)):
-    #       print(model_children[i]._DenseLayer)
-          
-        #   for j in range(model_children[i].children()):
-        #     print(model_children[i][j])
-
-
-
-#       from pytorchvis.visualize_layers import VisualizeLayers
-# #     # create an object of VisualizeLayers and initialize it with the model and 
-# #     # the layers whose output you want to visualize
-     
-#       vis = VisualizeLayers(model,layers='conv')
-#       output_layers=vis.get_saved_layer_names()
-#       print(output_layers)
-      
-      v = VisualizeLayers_(model,False)
-      print(v.get_saved_layer_names())
-      
-#     # load the input
-#     x = torch.randn([1,3,224,224])
-#     # pass the input and get the output
-#     output = model(x)
-#     # get the intermediate layers output which was passed during initialization
-#     interm_output = vis.get_interm_output()
-    
-#     # plot the featuremap of the layer which you want, to see what are the layers
-#     # saved simply call vis.get_saved_layer_names
-#     name_list=vis.get_saved_layer_names()
-    
-#     vis.plot_featuremaps(interm_output[name_list[0]],name='noise_inpt_color_fmap-1',color_map='color',savefig=True)
-    
-    
-
