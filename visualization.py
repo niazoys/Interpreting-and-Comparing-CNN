@@ -9,12 +9,13 @@ import os
 class visualize_network():
     def __init__(self,net_name,top = 3,nrows = 32):
         self.net_name         = net_name
-        self.dir_path         = os.path.join('IOU',net_name)
-        self.ig_path         = os.path.join('IG',net_name)
-        self.num_concept_type = 6
-        self.nrows            = nrows
-        self.top              = top    
-
+        self.dir_path         = os.path.join('IOU',net_name)    # Intersection over union scores directory
+        self.ig_path          = os.path.join('IG',net_name)     # Integrated gradient scores directory
+        self.num_concept_type = 6                               # [color,object,part,material,scene,texture]
+        self.top              = top 
+        self.nrows            = nrows                           # In figure, No. rows to plot per column.
+                                                                # for 64 neurons, if nrow=32, then new matrix will be 32x2  
+   
     def vis_iou_score_dist_per_layer(self):
         '''
         generates a heatmap using the top IOU scores per layer in the network
@@ -61,6 +62,9 @@ class visualize_network():
         # plt.savefig('gui_resources/'+self.net_name+'_iou_layerwise_dist/'+self.net_name+'.png')
 
     def check_uniqueness(self,value):
+        '''
+        Checks uniqueness of the matrix before plotting to avoid misleading colorbar
+        '''
         k = np.unique(value)
         for i in range(1,5):
             q=True
@@ -75,6 +79,9 @@ class visualize_network():
 
 
     def get_top_iou_per_unit(self,iou):
+        '''
+        returns the top iou score of each unit in a layer
+        '''
         iou = np.nan_to_num(iou)
         top_iou = iou.max(axis=1).max(axis=1)
         top_iou = self.reshape_mat(top_iou)
@@ -119,6 +126,10 @@ class visualize_network():
         return width_ratios_
 
     def reshape_mat(self,mat):
+        '''
+        Reshapes the matrix into a new shape to fit into the plotting window
+        for 64 neurons, if nrow=32, then new matrix will be 32x2
+        '''
         new_mat  = mat.reshape(self.nrows,-1)
         return new_mat
 
@@ -189,21 +200,22 @@ class visualize_network():
         '''
         genarates a classwise IG map per layer
         '''
-        class_list  = [123,50,191,121,135]
+        class_list  = [121,135,123,191,50,519,203,70,88,105]
+        
         # class_list  = [50]
         layer_names = os.listdir(self.dir_path)
         nlayers     = np.size(layer_names)
 
         # Parameters of the figure
-        fig_ratio      = np.ones(nlayers-1)
+        fig_ratio      = np.ones(nlayers)
         colorbar_ratio = np.array([0.08])
         width_ratios_=np.concatenate((fig_ratio,colorbar_ratio))
-        fig, ax= plt.subplots(1,nlayers, 
+        fig, ax= plt.subplots(1,nlayers+1, 
                     gridspec_kw={'width_ratios':width_ratios_})
 
         #---------------------------------------------------------------------------------------
-        values_range = np.zeros((len(class_list),nlayers-1))
-        for l in range(1,nlayers):
+        values_range = np.zeros((len(class_list),nlayers))
+        for l in range(nlayers):
             layer = layer_names[l]
             layer = layer[4:-4]
             for c in range(len(class_list)):
@@ -212,38 +224,40 @@ class visualize_network():
                 percentile = 25
                 threshold=np.quantile(mat,1-percentile/100)
                 itemindex = np.where(mat>threshold)
-                values_range[c,l-1] = sum(mat[itemindex])
+                values_range[c,l] = sum(mat[itemindex])
 
         # temp = np.zeros_like(values_range)
         # for i in range(temp.shape[0]):
         #     temp[i,:] = values_range[i,:]/max(values_range[i,:])
         # values_range = temp
         #-------------------------------------------------------------------------------------------------------------------------------
-        for l in range(1,nlayers):
-            a=values_range[:,l-1]
+        for l in range(nlayers):
+            a=values_range[:,l]
             a = a[:, np.newaxis]
 
             if l==nlayers-1:
-                g = sns.heatmap(a,vmax=values_range.max(),vmin=values_range.min(),annot=True ,ax=ax[l-1], cbar_ax=ax[l])
+                g = sns.heatmap(a,vmax=values_range.max(),vmin=values_range.min(),annot=True ,ax=ax[l], cbar_ax=ax[l+1])
             else:
-                g = sns.heatmap(a,vmax=values_range.max(),vmin=values_range.min(),annot=True,cbar=False,ax=ax[l-1])
+                g = sns.heatmap(a,vmax=values_range.max(),vmin=values_range.min(),annot=True,cbar=False,ax=ax[l])
             g.set_xlabel('Layer_'+str(l))
             g.set_xticks([])
             g.set_yticks([])
             tl = g.get_xlabel()
-            g.set_xlabel(tl, rotation=45)
-            if l==1:
+            g.set_xlabel(tl, rotation=90)
+            if l==0:
                 g.set_ylabel(class_list)
+                tl = g.get_ylabel()
+                g.set_ylabel(tl, rotation=90)
 
 
-        fig.suptitle("Classwise IG Distribution")
+        fig.suptitle(self.net_name)
         plt.show()        
         return values_range
 
 if __name__ == "__main__":
-    a = visualize_network('alexnet')
-    #a = visualize_network('resnet18')
-    # a = visualize_network('vgg11')
+    # a = visualize_network('alexnet')
+    # a = visualize_network('resnet18')
+    a = visualize_network('vgg11')
 
     # a.vis_iou_score_dist_per_layer()
     # a.vis_concept_dist_per_layer()
