@@ -256,8 +256,8 @@ class visualize_network():
 
 if __name__ == "__main__":
     # a = visualize_network('alexnet')
-    # a = visualize_network('resnet18')
-    a = visualize_network('vgg11')
+    a = visualize_network('resnet18')
+    # a = visualize_network('vgg11')
 
     # a.vis_iou_score_dist_per_layer()
     # a.vis_concept_dist_per_layer()
