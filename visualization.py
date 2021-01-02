@@ -9,12 +9,13 @@ import os
 class visualize_network():
     def __init__(self,net_name,top = 3,nrows = 32):
         self.net_name         = net_name
-        self.dir_path         = os.path.join('IOU',net_name)
-        self.ig_path         = os.path.join('IG',net_name)
-        self.num_concept_type = 6
-        self.nrows            = nrows
-        self.top              = top    
-
+        self.dir_path         = os.path.join('IOU',net_name)    # Intersection over union scores directory
+        self.ig_path          = os.path.join('IG',net_name)     # Integrated gradient scores directory
+        self.num_concept_type = 6                               # [color,object,part,material,scene,texture]
+        self.top              = top 
+        self.nrows            = nrows                           # In figure, No. rows to plot per column.
+                                                                # for 64 neurons, if nrow=32, then new matrix will be 32x2  
+   
     def vis_iou_score_dist_per_layer(self):
         '''
         generates a heatmap using the top IOU scores per layer in the network
@@ -61,6 +62,9 @@ class visualize_network():
         # plt.savefig('gui_resources/'+self.net_name+'_iou_layerwise_dist/'+self.net_name+'.png')
 
     def check_uniqueness(self,value):
+        '''
+        Checks uniqueness of the matrix before plotting to avoid misleading colorbar
+        '''
         k = np.unique(value)
         for i in range(1,5):
             q=True
@@ -75,6 +79,9 @@ class visualize_network():
 
 
     def get_top_iou_per_unit(self,iou):
+        '''
+        returns the top iou score of each unit in a layer
+        '''
         iou = np.nan_to_num(iou)
         top_iou = iou.max(axis=1).max(axis=1)
         top_iou = self.reshape_mat(top_iou)
@@ -119,6 +126,10 @@ class visualize_network():
         return width_ratios_
 
     def reshape_mat(self,mat):
+        '''
+        Reshapes the matrix into a new shape to fit into the plotting window
+        for 64 neurons, if nrow=32, then new matrix will be 32x2
+        '''
         new_mat  = mat.reshape(self.nrows,-1)
         return new_mat
 
@@ -241,8 +252,8 @@ class visualize_network():
         return values_range
 
 if __name__ == "__main__":
-    # a = visualize_network('alexnet')
-    a = visualize_network('resnet18')
+    a = visualize_network('alexnet')
+    # a = visualize_network('resnet18')
     # a = visualize_network('vgg11')
 
     # a.vis_iou_score_dist_per_layer()
