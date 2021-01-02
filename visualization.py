@@ -200,21 +200,22 @@ class visualize_network():
         '''
         genarates a classwise IG map per layer
         '''
-        class_list  = [123,50,191,121,135]
+        class_list  = [121,135,123,191,50,519,203,70,88,105]
+        
         # class_list  = [50]
         layer_names = os.listdir(self.dir_path)
         nlayers     = np.size(layer_names)
 
         # Parameters of the figure
-        fig_ratio      = np.ones(nlayers-1)
+        fig_ratio      = np.ones(nlayers)
         colorbar_ratio = np.array([0.08])
         width_ratios_=np.concatenate((fig_ratio,colorbar_ratio))
-        fig, ax= plt.subplots(1,nlayers, 
+        fig, ax= plt.subplots(1,nlayers+1, 
                     gridspec_kw={'width_ratios':width_ratios_})
 
         #---------------------------------------------------------------------------------------
-        values_range = np.zeros((len(class_list),nlayers-1))
-        for l in range(1,nlayers):
+        values_range = np.zeros((len(class_list),nlayers))
+        for l in range(nlayers):
             layer = layer_names[l]
             layer = layer[4:-4]
             for c in range(len(class_list)):
@@ -223,27 +224,27 @@ class visualize_network():
                 percentile = 25
                 threshold=np.quantile(mat,1-percentile/100)
                 itemindex = np.where(mat>threshold)
-                values_range[c,l-1] = sum(mat[itemindex])
+                values_range[c,l] = sum(mat[itemindex])
 
         # temp = np.zeros_like(values_range)
         # for i in range(temp.shape[0]):
         #     temp[i,:] = values_range[i,:]/max(values_range[i,:])
         # values_range = temp
         #-------------------------------------------------------------------------------------------------------------------------------
-        for l in range(1,nlayers):
-            a=values_range[:,l-1]
+        for l in range(nlayers):
+            a=values_range[:,l]
             a = a[:, np.newaxis]
 
             if l==nlayers-1:
-                g = sns.heatmap(a,vmax=values_range.max(),vmin=values_range.min(),annot=True ,ax=ax[l-1], cbar_ax=ax[l])
+                g = sns.heatmap(a,vmax=values_range.max(),vmin=values_range.min(),annot=True ,ax=ax[l], cbar_ax=ax[l+1])
             else:
-                g = sns.heatmap(a,vmax=values_range.max(),vmin=values_range.min(),annot=True,cbar=False,ax=ax[l-1])
+                g = sns.heatmap(a,vmax=values_range.max(),vmin=values_range.min(),annot=True,cbar=False,ax=ax[l])
             g.set_xlabel('Layer_'+str(l))
             g.set_xticks([])
             g.set_yticks([])
             tl = g.get_xlabel()
             g.set_xlabel(tl, rotation=45)
-            if l==1:
+            if l==0:
                 g.set_ylabel(class_list)
 
 
