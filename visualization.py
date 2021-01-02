@@ -243,19 +243,21 @@ class visualize_network():
             g.set_xticks([])
             g.set_yticks([])
             tl = g.get_xlabel()
-            g.set_xlabel(tl, rotation=45)
+            g.set_xlabel(tl, rotation=90)
             if l==0:
                 g.set_ylabel(class_list)
+                tl = g.get_ylabel()
+                g.set_ylabel(tl, rotation=90)
 
 
-        fig.suptitle("Classwise IG Distribution")
+        fig.suptitle(self.net_name)
         plt.show()        
         return values_range
 
 if __name__ == "__main__":
-    a = visualize_network('alexnet')
+    # a = visualize_network('alexnet')
     # a = visualize_network('resnet18')
-    # a = visualize_network('vgg11')
+    a = visualize_network('vgg11')
 
     # a.vis_iou_score_dist_per_layer()
     # a.vis_concept_dist_per_layer()
