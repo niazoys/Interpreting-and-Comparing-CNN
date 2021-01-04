@@ -70,12 +70,6 @@ class Hooker(object):
             self.hook_handle.remove()
 
     def hook_layers(self,layer_name=None):
-        
-        # Attach Hook to the conv layers 
-        # if layer_name==None: 
-        #     for name in self.conv_layers:
-        #         hookself.conv_layers[name].register_forward_hook(self.__get_activation(name))
-        # else:
 
         self.hook_handle=self.conv_layers[layer_name].register_forward_hook(self.__get_activation(layer_name))
         self.existing_hook_flag=True          

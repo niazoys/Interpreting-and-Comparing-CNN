@@ -142,7 +142,6 @@ class NetStat(QWidget):
         else:
             print ("Wrong Netowrk Selected")
 
-
 class NetAttribute(QWidget):
     def __init__ (self):
         super(NetAttribute, self).__init__()
@@ -154,7 +153,7 @@ class NetAttribute(QWidget):
         self.height = 790
         self.setGeometry(self.x,self.y,self.width,self.height)
         self.NetAttribute_window()
-
+        self.util=Utility()
 
     def NetAttribute_window(self):
         self.Netatt_layout = QVBoxLayout()
@@ -238,13 +237,13 @@ class NetAttribute(QWidget):
 
     def getAttribution(self):
 
-        max_val, preds = torch.max(self.model(self.x),dim=1)
+        _, preds = torch.max(self.model(self.x),dim=1)
         
         #Initiate layer IG object
-        IG=IntegratedGradients(self.model)
+        self.attributor=IntegratedGradients(self.model)
 
         # get the IG map
-        attribution=IG.attribute(self.x,target=preds,n_steps=int(self.IG_steps))
+        attribution=self.attributor.attribute(self.x,target=preds,n_steps=int(self.IG_steps))
         self.attribution=np.transpose(attribution.squeeze(0).cpu().detach().numpy(), (1, 2, 0))
 
     def showImage(self):
@@ -266,7 +265,7 @@ class NetAttribute(QWidget):
     def getImage(self):
       self.fname,_ = QFileDialog.getOpenFileName(self, 'Open file', 
          'c:\\',"Image files (*.jpg *.gif *.png *.jpeg *.JPEG)")
-      self.x=Utility.load_single_image(self.fname,False)
+      self.x=self.util.load_single_image(self.fname,False)
       
       if self.x != None:
         pixmap = QPixmap(self.fname)
@@ -304,7 +303,6 @@ class NetAttribute(QWidget):
         self.mainwindow = MainWindow()
         self.hide()
         self.mainwindow.show()
-
 
 class MainWindow(QWidget):
     def __init__(self):
