@@ -50,8 +50,6 @@ class imageLoader(Dataset):
 
         return sample
 
-
-
 concepts = ["color","object","part","material","scene","texture"]
 
 class conceptLoader(Dataset):
@@ -188,18 +186,3 @@ class classLoader(Dataset):
         return (im[:,:,0] + (im[:,:,1])*256)
 
   
-if __name__ == "__main__":
-
-    '''  Sample Useages '''
-    dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
-    # data_obj = imageLoader(dataset_path)
-    # data_obj = conceptLoader(dataset_path)
-    data_obj = classLoader(dataset_path)
-    # flag,sample,mask = data_obj.load_class(1,1)
-    sample,mask = data_obj.load_batch(93,20)
-    # print(aa.shape)
-    # print(np.unique(aa.numpy()))
-    # print(flag)
-    print(sample.shape)
-    print(mask.shape)
-    

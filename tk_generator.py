@@ -1,52 +1,36 @@
-from utility import Utility
-from compute_iou import compute_iou
 from probe_model import probe_model
 from dataloader import conceptLoader
 import numpy as np 
-from visualize_layers import VisualizeLayers
-from compute_qd import Compute_qd
+from Layer_hooker import Hooker
 import gc
 import os
 
-if __name__ == "__main__":
 
-        ###########################################
+class ComputeTK():
+
+    def __init__(self):
         #create object for model probe
-        pm=probe_model(True)
-
-        # create activation generator & visualizer object
-        '''
-           Remember to change the 2nd argument to False for non Residual networks.(e.g. ALexnet ,VGG) 
-        '''
-        vis=VisualizeLayers(pm.get_model())
-        
+        self.feature_generator=probe_model(True)
+        # create activation generator & self.hookerualizer object
+        self.hooker=Hooker(self.feature_generator.get_model())
+      
+    def main(self):
+        ###########################################
         # falg for hook tracking        
         existing_hook=False
-            
-        
         # Total data 
         total_data=60000
         #Batch Size
-        batch_size=150
-        #number of iteratio
+        batch_size=50
+        #number of iteration
         iteration=int((total_data/batch_size))
-
         # in how many parts we want to do the calculation (Must be even Number)
         part_ln = 16
-        
         ###########################################  
 
         #get the names of the layers in the network 
-        layer_names=vis.get_saved_layer_names()
+        layer_names=self.hooker.get_saved_layer_names()
         
-        # # Create Tk directory for the network
-        # model_name = pm.get_model().__class__.__name__
-        # cwd = os.getcwd()  
-        # dir = os.path.join(cwd,"Tk",model_name)
-        # if not os.path.exists(dir):
-        #     os.mkdir(dir)
-
-
         for layer in layer_names:
             print(layer)
             tk=[]
@@ -56,14 +40,14 @@ if __name__ == "__main__":
                 
                 #check if there is already any hook attached and remove it 
                 if existing_hook:
-                    vis.remove_all_hooks()
+                    self.hooker.remove_all_hooks()
 
                 #attch hook for different cnn layers
-                vis.hook_layers(layer)
+                self.hooker.hook_layers(layer)
                 existing_hook=True
 
                 #Generate tk 
-                featuremap=pm.probe(iteration=iteration,batch_size=batch_size,vis=vis,layer=layer,part_ln=part_ln,part=part)
+                featuremap=self.feature_generator.probe(iteration=iteration,batch_size=batch_size,hooker=self.hooker,layer=layer,part_ln=part_ln,part=part)
 
                 print("Generating Tk")
                 #Generate tk and save them
@@ -74,9 +58,15 @@ if __name__ == "__main__":
                 del featuremap
                 
                 #Reset the image loading counter to zero     
-                pm.imLoader.data_counter=0
+                self.feature_generator.imLoader.data_counter=0
                 gc.collect()
             
             # save TK matrix    
             np.save('TK/vgg11/tk_'+str(layer)+'.npy',tk)
                 
+
+
+
+if __name__ == "__main__":
+    tk=ComputeTK()
+    tk.main()

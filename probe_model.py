@@ -13,23 +13,19 @@ import time
 import numpy as np
 import gc
 
-
-from visualize_layers import  VisualizeLayers
+from Layer_hooker import  Hooker
 from  utility import Utility
-from dataloader import *
-from compute_iou import compute_iou
-
-
+from dataloader import imageLoader,conceptLoader
 
 class probe_model(nn.Module):
     def __init__(self,half_mode=False):
         super(probe_model,self).__init__()
         self.model = models.vgg11(pretrained=True)
+        util=Utility()
 
         # Get the GPU if available
         self.device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu")    
-        #self.device=torch.device("cpu")
-        
+       
         # attach the model to cuda
         self.model.to(self.device)
 
@@ -38,9 +34,9 @@ class probe_model(nn.Module):
             self.model.half()    
 
         
-        #self.dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
+        self.dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
         # self.dataset_path='E:\\TRDP_python\\Crack-The-CNN\\broden1_227'
-        self.dataset_path='broden1_227'
+        #self.dataset_path='broden1_227'
         # self.dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
         #self.dataset_path='broden1_227'
         
@@ -50,7 +46,7 @@ class probe_model(nn.Module):
     def get_model(self):
         return self.model
 
-    def probe(self,iteration,batch_size,vis,layer,part_ln,part):
+    def probe(self,iteration,batch_size,hooker,layer,part_ln,part):
         featuremap=[]
         idx_flag=True
         
@@ -72,7 +68,7 @@ class probe_model(nn.Module):
 
             
             # get the activation 
-            interm_output_list=vis.get_interm_output_aslist()
+            interm_output_list=hooker.get_interm_output_aslist()
             
 
             # Convert the list into tensor 
@@ -87,10 +83,9 @@ class probe_model(nn.Module):
                     self.idx_list.append(n)
                 idx_flag=False
            
-            
+            # Keep the part of activations
             interm_output_list=interm_output_list[:, self.idx_list[part-1]: self.idx_list[part],:,:]
             
-            #interm_output_list=interm_output_list[:,1,:,:]
             
             # detach the featuremap tensor from GPU and convert it to numpy array 
             featuremap.append(interm_output_list.cpu().detach().numpy())

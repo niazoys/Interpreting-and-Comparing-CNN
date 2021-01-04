@@ -6,7 +6,7 @@ from numpy import unravel_index
 import os
 
 
-class visualize_network():
+class VisualizeNetwork():
     def __init__(self,net_name,top = 3,nrows = 32):
         self.net_name         = net_name
         self.dir_path         = os.path.join('IOU',net_name)    # Intersection over union scores directory
@@ -250,16 +250,13 @@ class visualize_network():
                 g.set_ylabel(tl, rotation=90)
 
 
-        fig.suptitle(self.net_name)
+        #fig.suptitle(self.net_name)
         plt.show()        
         return values_range
 
 if __name__ == "__main__":
-    # a = visualize_network('alexnet')
-    a = visualize_network('resnet18')
-    # a = visualize_network('vgg11')
-
-    # a.vis_iou_score_dist_per_layer()
-    # a.vis_concept_dist_per_layer()
+    # a = VisualizeNetwork('alexnet')
+    a = VisualizeNetwork('resnet18')
+    # a = VisualizeNetwork('vgg11')
 
     print(a.vis_classwise_IG_dist().shape)

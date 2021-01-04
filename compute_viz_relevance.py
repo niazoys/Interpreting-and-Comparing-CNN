@@ -3,7 +3,7 @@ from captum.attr._core.layer.layer_integrated_gradients import LayerIntegratedGr
 from captum.attr import visualization as vizu
 import matplotlib.pyplot as plt
 
-from visualize_layers import  VisualizeLayers
+from Layer_hooker import  Hooker
 from  utility import Utility
 from probe_model import probe_model
 import numpy as np 
@@ -121,7 +121,7 @@ if  __name__ == "__main__":
     '''
     Remember to change the 2nd argument to False for non Residual networks.(e.g. resnet18 ,VGG) 
     '''
-    vis=VisualizeLayers(model)
+    vis=Hooker(model)
     layer_names=vis.get_saved_layer_names()
     
 
