@@ -50,33 +50,7 @@ class probe_model(nn.Module):
     def get_model(self):
         return self.model
 
-
-    def model_eval(self,dataloader):
-        total = 0
-        correct = 0
-        
-        for x,y in dataloader:
-            
-            #transfer the data to GPU 
-            x=x.to(self.device)
-            y=y.to(self.device)
-            
-            out = self.model(x)
-            
-            max_val, preds = torch.max(out,dim=1)
-            total += y.shape[0]                 
-            correct += (preds == y).sum().item()
-        
-        accuracy = (100 * correct)/total
-    
-        return accuracy
-    
-
     def probe(self,iteration,batch_size,vis,layer,part_ln,part):
-        
-        # Timer for execution time 
-        start_time = time.time()
-
         featuremap=[]
         idx_flag=True
         
@@ -135,23 +109,3 @@ class probe_model(nn.Module):
     
         return featuremap
         
-        #print("Process finished --- %s seconds ---" % (time.time() - start_time))
-
-#%%
-if __name__=="__main__":
-    transform=transforms.Compose([transforms.Resize(224),transforms.ToTensor()])
-
-    # trainset=torchvision.datasets.CIFAR100(root='./dataset',train=True,
-    #                               download=True,transform=transform)
-
-    # trainloader=torch.utils.data.CIFAR100(trainset,batch_size=100,shuffle=True)
-
-    testset=torchvision.datasets.CIFAR100(root='./dataset',train=False,
-                                 download=True,transform=transform)
-
-    testloader=torch.utils.data.DataLoader(testset,batch_size=2,shuffle=False) 
-
-    modella = probe_model()
-    acc = modella.model_eval(testloader) 
-    print(acc)  
-    
