@@ -234,6 +234,7 @@ class VisualizeNetwork():
         for l in range(nlayers):
             a=values_range[:,l]
             a = a[:, np.newaxis]
+            print(a)
 
             if l==nlayers-1:
                 g = sns.heatmap(a,vmax=values_range.max(),vmin=values_range.min(),annot=True ,ax=ax[l], cbar_ax=ax[l+1])
@@ -255,8 +256,8 @@ class VisualizeNetwork():
         return values_range
 
 if __name__ == "__main__":
-    # a = VisualizeNetwork('alexnet')
-    a = VisualizeNetwork('resnet18')
+    a = VisualizeNetwork('alexnet')
+    # a = VisualizeNetwork('resnet18')
     # a = VisualizeNetwork('vgg11')
 
     print(a.vis_classwise_IG_dist().shape)
