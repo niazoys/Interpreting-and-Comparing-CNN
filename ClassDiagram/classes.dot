@@ -15,8 +15,8 @@ rankdir=BT
 "11" [label="{imageLoader|data_counter : int\lfileNames : TextFileReader\lroot_dir\l|load_batch(batch_size)\l}", shape="record"];
 "12" [label="{probe_model|dataset_path : str\ldevice\lidx_list : list\limLoader : imageLoader\lmodel : VGG\lstep : int\l|get_model()\lprobe(iteration, batch_size, hooker, layer, part_ln, part)\l}", shape="record"];
 "13" [label="{AttributionVisualizer|attribution_calculation : AttributionCalculation\lclasses\ldataset\lfeatures : list\l|get_insights_config()\lrender(debug)\lserve(blocking, debug, port, bind_all)\lvisualize()\l}", shape="record"];
-"14" [label="{IntegratedGradients|multiplies_by_inputs\l|attribute(inputs, baselines, target, additional_forward_args, n_steps, method, internal_batch_size, return_convergence_delta)\lhas_convergence_delta()\l}", shape="record"];
-"15" [label="{LayerIntegratedGradients|device_ids\lig : IntegratedGradients\lmultiplies_by_inputs\l|attribute(inputs, baselines, target, additional_forward_args, n_steps, method, internal_batch_size, return_convergence_delta, attribute_to_layer_input)\lhas_convergence_delta()\l}", shape="record"];
+"14" [label="{IntegratedGradients|multiplies_by_inputs\l|attribute(inputs, baselines, target, additional_forward_args, n_steps, method,return_convergence_delta)\lhas_convergence_delta()\l}", shape="record"];
+"15" [label="{LayerIntegratedGradients|device_ids\lig : IntegratedGradients\lmultiplies_by_inputs\l|attribute(inputs, baselines, target,n_steps, attribute_to_layer_input)\lhas_convergence_delta()\l}", shape="record"];
 "5" -> "4" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="", style="solid"];
 "6" -> "4" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="", style="solid"];
 "14" -> "5" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="", style="solid"];
