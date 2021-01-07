@@ -42,7 +42,7 @@ class VisualizeNetwork():
             value       = self.check_uniqueness(value)
             value       = self.reshape_mat(value)
             bounds      = [0.5,1.5,2.5,3.5,4.5]
-            print(np.unique(value))
+       
 
             if l==nlayers-1:
                 # g = sns.heatmap(value,ax=ax[l], cbar_ax=ax[nlayers])
@@ -213,7 +213,6 @@ class VisualizeNetwork():
         fig, ax= plt.subplots(1,nlayers+1, 
                     gridspec_kw={'width_ratios':width_ratios_})
 
-        #---------------------------------------------------------------------------------------
         values_range = np.zeros((len(class_list),nlayers))
         for l in range(nlayers):
             layer = layer_names[l]
@@ -226,15 +225,10 @@ class VisualizeNetwork():
                 itemindex = np.where(mat>threshold)
                 values_range[c,l] = sum(mat[itemindex])
 
-        # temp = np.zeros_like(values_range)
-        # for i in range(temp.shape[0]):
-        #     temp[i,:] = values_range[i,:]/max(values_range[i,:])
-        # values_range = temp
-        #-------------------------------------------------------------------------------------------------------------------------------
         for l in range(nlayers):
             a=values_range[:,l]
             a = a[:, np.newaxis]
-            print(a)
+
 
             if l==nlayers-1:
                 g = sns.heatmap(a,vmax=values_range.max(),vmin=values_range.min(),annot=True ,ax=ax[l], cbar_ax=ax[l+1])
@@ -253,11 +247,13 @@ class VisualizeNetwork():
 
         #fig.suptitle(self.net_name)
         plt.show()        
-        return values_range
+        
 
 if __name__ == "__main__":
-    a = VisualizeNetwork('alexnet')
-    # a = VisualizeNetwork('resnet18')
-    # a = VisualizeNetwork('vgg11')
+    vis= VisualizeNetwork('alexnet')
+    # vis = VisualizeNetwork('resnet18')
+    # vis = VisualizeNetwork('vgg11')
 
-    print(a.vis_classwise_IG_dist().shape)
+    vis.vis_classwise_IG_dist()
+    vis.vis_iou_score_dist_per_layer()
+    vis.vis_concept_dist_per_layer()

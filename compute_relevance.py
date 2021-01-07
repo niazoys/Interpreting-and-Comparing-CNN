@@ -57,54 +57,13 @@ class ComputeRelevance():
 
         #calculate the relevance score per unit 
         relevance_score =np.sum(np.sum(abs(masked_attribution),axis=3),axis=2)
-        
-        # plt.imshow(mask[1,:,:])
-        # plt.show()
-        # plt.imshow(np.transpose(x[1,:,:,:].cpu().numpy(),(1,2,0)))
-        # plt.show()
-        # agg=np.sum(attribution[1,:,:,:],axis=0)
-
-        # plt.imshow(agg,cmap="inferno")
-        # plt.show()
-        att=Utility.resize_IG_batch(attribution_,[227,227])
-        mat=np.load('top_bottom_index/resnet18/bottom_class_0105.npy',allow_pickle=True)
-        mat=mat[2][0]
-        t_att=att[1,mat,:,:]
-        t_att=np.sum(t_att,axis=0)
-
-        # th=np.quantile(t_att,0.99999)
-        # t_att=t_att>th
-        
-        fig, axs = plt.subplots(nrows=1, ncols=2, squeeze=False, figsize=   (8, 8))
-        axs[0, 0].set_title('Attribution mask')
-        axs[0, 0].imshow(att[1,5,:,:], cmap=plt.cm.inferno)
-        axs[0, 0].axis('off')
-        axs[0, 1].set_title('Overlay IG on Input image ')
-        
-        #t_att=t_att-t_att.min()/t_att.max()
-        axs[0, 1].imshow(t_att)
-        tmp=np.transpose(x[1,:,:,:].cpu().numpy(),(1,2,0))
-        #tmp=Utility.normalize_image(tmp)
-        axs[0, 1].imshow(tmp, alpha=0.4)
-        axs[0, 1].axis('off')
-        plt.tight_layout()
-        plt.show()
-        
-        # img = Image.fromarray(np.uint8(att[1,1,:,:] * 255) , 'L')
-        # img.show()
-
-        # tmp=np.transpose(x[1,:,:,:].cpu().numpy(),(1,2,0))
-        # _ = vizu.visualize_image_attr((att[1,1,:,:]),tmp[:,:,1],sign="absolute_value", method="blended_heat_map",use_pyplot=False,
-        #                             show_colorbar=False, title="Integrated Gradient Overlayed on Input")
-        
-        
+                
         return attribution,masked_attribution,relevance_score
 
     def main(self):
               
         # Get the data and annotation mask 
-        #dataset_path='broden1_227'
-        dataset_path='D:\\Net\\NetDissect\\dataset\\broden1_227'
+        dataset_path='broden1_227'
         clLoader=classLoader(dataset_path)
      
         #Get the layers 

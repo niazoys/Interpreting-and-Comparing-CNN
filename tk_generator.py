@@ -16,7 +16,7 @@ class ComputeTK():
       
     def main(self):
         ###########################################
-        # falg for hook tracking        
+        # flag for hook tracking        
         existing_hook=False
         # Total data 
         total_data=60000
