@@ -3,4 +3,6 @@ This repository contains the code for Interpreting and Understanding Convolution
 
 More details can be found here ["Interpreting and Comparing Convolutional Neural Networks: A Quantitative Approach"](https://www.preprints.org/manuscript/202101.0579/v1)
 
-Accepted in ["2021 5th International Conference on Electrical Engineering and Information & Communication Technology (ICEEICT) Military Institute of Science and Technology (MIST), Dhaka, Bangladesh](https://iceeict2021mist.org/). (Online copy yet to appear)
+'''
+M. M. Islam and Z. H. Tushar, "Interpreting and Comparing Convolutional Neural Networks: A Quantitative Approach," 2021 5th International Conference on Electrical Engineering and Information & Communication Technology (ICEEICT), 2021, pp. 1-6, Doi: 10.1109/ICEEICT53905.2021.9667854.
+'''
